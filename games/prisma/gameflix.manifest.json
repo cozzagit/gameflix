@@ -1,0 +1,23 @@
+{
+  "id": "prisma",
+  "version": "1.0.0",
+  "title": "Prisma",
+  "description": "Guida la luce attraverso prismi, specchi e filtri per illuminare i bersagli con i colori giusti. 10 livelli di ottica creativa.",
+  "category": "brainlab",
+  "difficulty": 3,
+  "estimatedDuration": 15,
+  "thumbnailUrl": "/images/games/prisma-thumb.svg",
+  "tags": ["luce", "colori", "puzzle", "ottica", "logica"],
+  "supportsDaily": false,
+  "scoringType": "points",
+  "minPlayersForLeaderboard": 5,
+  "features": {
+    "levels": 10,
+    "tutorial": true,
+    "mobile": true,
+    "audio": true,
+    "pwa": false
+  },
+  "releaseDate": null,
+  "status": "ready"
+}

@@ -1,0 +1,219 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <!-- Background gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#12122a"/>
+      <stop offset="100%" stop-color="#0A0A14"/>
+    </radialGradient>
+
+    <!-- Cyan glow -->
+    <radialGradient id="cyanGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="1"/>
+      <stop offset="40%" stop-color="#00b8d4" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Violet glow -->
+    <radialGradient id="violetGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#d500f9" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#aa00ff" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#7c4dff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Green target glow -->
+    <radialGradient id="greenGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#76ff03" stop-opacity="0.8"/>
+      <stop offset="50%" stop-color="#69f0ae" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#00e676" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Particle glow -->
+    <radialGradient id="particleGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="30%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Trail gradient -->
+    <linearGradient id="trailGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#00e5ff" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="bigGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+    </filter>
+
+    <filter id="textGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Star field filter for twinkle -->
+    <filter id="starTwinkle">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="360" fill="url(#bgGrad)"/>
+
+  <!-- Nebula wisps -->
+  <ellipse cx="500" cy="100" rx="180" ry="80" fill="#1a0a3a" opacity="0.4" transform="rotate(-15 500 100)"/>
+  <ellipse cx="120" cy="280" rx="150" ry="60" fill="#0a1a2a" opacity="0.5" transform="rotate(10 120 280)"/>
+  <ellipse cx="320" cy="180" rx="250" ry="100" fill="#0d0d2a" opacity="0.3"/>
+
+  <!-- Stars - small dots scattered -->
+  <g fill="white" filter="url(#starTwinkle)">
+    <circle cx="45" cy="30" r="1.2" opacity="0.9"/>
+    <circle cx="120" cy="55" r="0.8" opacity="0.6"/>
+    <circle cx="200" cy="20" r="1" opacity="0.8"/>
+    <circle cx="310" cy="45" r="0.6" opacity="0.5"/>
+    <circle cx="430" cy="25" r="1.3" opacity="0.9"/>
+    <circle cx="550" cy="50" r="0.9" opacity="0.7"/>
+    <circle cx="600" cy="30" r="0.7" opacity="0.6"/>
+    <circle cx="80" cy="120" r="0.8" opacity="0.5"/>
+    <circle cx="170" cy="150" r="1.1" opacity="0.8"/>
+    <circle cx="500" cy="140" r="0.7" opacity="0.6"/>
+    <circle cx="580" cy="180" r="1" opacity="0.7"/>
+    <circle cx="30" cy="200" r="0.9" opacity="0.6"/>
+    <circle cx="250" cy="280" r="0.8" opacity="0.5"/>
+    <circle cx="400" cy="300" r="1.2" opacity="0.8"/>
+    <circle cx="530" cy="270" r="0.6" opacity="0.5"/>
+    <circle cx="610" cy="310" r="0.9" opacity="0.7"/>
+    <circle cx="60" cy="310" r="0.7" opacity="0.6"/>
+    <circle cx="150" cy="330" r="1" opacity="0.7"/>
+    <circle cx="350" cy="340" r="0.8" opacity="0.5"/>
+    <circle cx="480" cy="320" r="1.1" opacity="0.8"/>
+    <circle cx="290" cy="90" r="0.6" opacity="0.4"/>
+    <circle cx="450" cy="200" r="0.9" opacity="0.6"/>
+    <circle cx="100" cy="250" r="0.7" opacity="0.5"/>
+    <circle cx="380" cy="160" r="1" opacity="0.7"/>
+    <circle cx="220" cy="210" r="0.8" opacity="0.6"/>
+  </g>
+
+  <!-- Brighter stars with cross flare -->
+  <g filter="url(#glow)">
+    <line x1="87" y1="80" x2="93" y2="80" stroke="white" stroke-width="0.8" opacity="0.9"/>
+    <line x1="90" y1="77" x2="90" y2="83" stroke="white" stroke-width="0.8" opacity="0.9"/>
+    <circle cx="90" cy="80" r="1.5" fill="white" opacity="0.9"/>
+
+    <line x1="547" y1="108" x2="553" y2="108" stroke="white" stroke-width="0.8" opacity="0.8"/>
+    <line x1="550" y1="105" x2="550" y2="111" stroke="white" stroke-width="0.8" opacity="0.8"/>
+    <circle cx="550" cy="108" r="1.3" fill="white" opacity="0.8"/>
+
+    <line x1="327" y1="308" x2="333" y2="308" stroke="#aaddff" stroke-width="0.6" opacity="0.7"/>
+    <line x1="330" y1="305" x2="330" y2="311" stroke="#aaddff" stroke-width="0.6" opacity="0.7"/>
+    <circle cx="330" cy="308" r="1" fill="#aaddff" opacity="0.7"/>
+  </g>
+
+  <!-- Cyan attractor gravity well -->
+  <g filter="url(#softGlow)">
+    <circle cx="200" cy="160" r="60" fill="none" stroke="#00e5ff" stroke-width="0.5" opacity="0.15"/>
+    <circle cx="200" cy="160" r="48" fill="none" stroke="#00e5ff" stroke-width="0.6" opacity="0.2"/>
+    <circle cx="200" cy="160" r="36" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.3"/>
+    <circle cx="200" cy="160" r="24" fill="none" stroke="#00e5ff" stroke-width="1" opacity="0.4"/>
+    <circle cx="200" cy="160" r="14" fill="none" stroke="#00e5ff" stroke-width="1.2" opacity="0.5"/>
+  </g>
+  <circle cx="200" cy="160" r="50" fill="url(#cyanGlow)" opacity="0.25"/>
+  <circle cx="200" cy="160" r="6" fill="#00e5ff" opacity="0.9" filter="url(#glow)"/>
+  <circle cx="200" cy="160" r="3" fill="white" opacity="0.95"/>
+
+  <!-- Violet repeller gravity well -->
+  <g filter="url(#softGlow)">
+    <circle cx="460" cy="200" r="50" fill="none" stroke="#d500f9" stroke-width="0.5" opacity="0.15"/>
+    <circle cx="460" cy="200" r="40" fill="none" stroke="#d500f9" stroke-width="0.6" opacity="0.2"/>
+    <circle cx="460" cy="200" r="30" fill="none" stroke="#d500f9" stroke-width="0.8" opacity="0.3"/>
+    <circle cx="460" cy="200" r="20" fill="none" stroke="#d500f9" stroke-width="1" opacity="0.4"/>
+  </g>
+  <circle cx="460" cy="200" r="40" fill="url(#violetGlow)" opacity="0.2"/>
+  <!-- Repeller rays -->
+  <g stroke="#d500f9" stroke-width="1" opacity="0.3" filter="url(#softGlow)">
+    <line x1="460" y1="200" x2="460" y2="145"/>
+    <line x1="460" y1="200" x2="460" y2="255"/>
+    <line x1="460" y1="200" x2="405" y2="200"/>
+    <line x1="460" y1="200" x2="515" y2="200"/>
+    <line x1="460" y1="200" x2="421" y2="161"/>
+    <line x1="460" y1="200" x2="499" y2="239"/>
+    <line x1="460" y1="200" x2="499" y2="161"/>
+    <line x1="460" y1="200" x2="421" y2="239"/>
+  </g>
+  <circle cx="460" cy="200" r="5" fill="#d500f9" opacity="0.9" filter="url(#glow)"/>
+  <circle cx="460" cy="200" r="2.5" fill="#ffccff" opacity="0.95"/>
+
+  <!-- Second smaller cyan attractor -->
+  <g filter="url(#softGlow)">
+    <circle cx="340" cy="100" r="30" fill="none" stroke="#00bcd4" stroke-width="0.4" opacity="0.12"/>
+    <circle cx="340" cy="100" r="22" fill="none" stroke="#00bcd4" stroke-width="0.5" opacity="0.18"/>
+    <circle cx="340" cy="100" r="14" fill="none" stroke="#00bcd4" stroke-width="0.7" opacity="0.25"/>
+  </g>
+  <circle cx="340" cy="100" r="25" fill="url(#cyanGlow)" opacity="0.15"/>
+  <circle cx="340" cy="100" r="4" fill="#00bcd4" opacity="0.8" filter="url(#glow)"/>
+  <circle cx="340" cy="100" r="2" fill="white" opacity="0.9"/>
+
+  <!-- Green target -->
+  <circle cx="540" cy="120" r="22" fill="url(#greenGlow)" opacity="0.3"/>
+  <circle cx="540" cy="120" r="18" fill="none" stroke="#76ff03" stroke-width="1.5" opacity="0.6" filter="url(#glow)"/>
+  <circle cx="540" cy="120" r="12" fill="none" stroke="#76ff03" stroke-width="1" opacity="0.4"/>
+  <circle cx="540" cy="120" r="6" fill="none" stroke="#76ff03" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="540" cy="120" r="2.5" fill="#76ff03" opacity="0.8" filter="url(#glow)"/>
+  <!-- Crosshair -->
+  <line x1="540" y1="100" x2="540" y2="140" stroke="#76ff03" stroke-width="0.6" opacity="0.3"/>
+  <line x1="520" y1="120" x2="560" y2="120" stroke="#76ff03" stroke-width="0.6" opacity="0.3"/>
+
+  <!-- Particle trail - curved path through gravity wells -->
+  <path d="M 60,280 Q 120,250 160,200 Q 190,160 220,140 Q 260,115 300,108 Q 330,104 360,120 Q 400,145 420,180 Q 430,200 440,195 Q 460,170 490,150 Q 510,138 530,125"
+        fill="none" stroke="url(#trailGrad)" stroke-width="2.5" stroke-linecap="round" filter="url(#glow)" opacity="0.8"/>
+
+  <!-- Trail particles along the path -->
+  <g filter="url(#softGlow)" fill="#00e5ff">
+    <circle cx="120" cy="248" r="1" opacity="0.2"/>
+    <circle cx="160" cy="200" r="1.2" opacity="0.3"/>
+    <circle cx="200" cy="155" r="1.3" opacity="0.35"/>
+    <circle cx="260" cy="116" r="1.5" opacity="0.4"/>
+    <circle cx="330" cy="104" r="1.5" opacity="0.45"/>
+    <circle cx="390" cy="140" r="1.8" opacity="0.5"/>
+    <circle cx="430" cy="190" r="1.8" opacity="0.55"/>
+    <circle cx="470" cy="163" r="2" opacity="0.6"/>
+    <circle cx="505" cy="142" r="2" opacity="0.7"/>
+  </g>
+
+  <!-- Main particle -->
+  <circle cx="530" cy="126" r="16" fill="url(#particleGlow)" opacity="0.5"/>
+  <circle cx="530" cy="126" r="5" fill="#00e5ff" filter="url(#bigGlow)" opacity="0.9"/>
+  <circle cx="530" cy="126" r="3" fill="white"/>
+
+  <!-- Grid lines (very subtle) -->
+  <g stroke="#00e5ff" stroke-width="0.15" opacity="0.08">
+    <line x1="0" y1="60" x2="640" y2="60"/>
+    <line x1="0" y1="120" x2="640" y2="120"/>
+    <line x1="0" y1="180" x2="640" y2="180"/>
+    <line x1="0" y1="240" x2="640" y2="240"/>
+    <line x1="0" y1="300" x2="640" y2="300"/>
+    <line x1="80" y1="0" x2="80" y2="360"/>
+    <line x1="160" y1="0" x2="160" y2="360"/>
+    <line x1="240" y1="0" x2="240" y2="360"/>
+    <line x1="320" y1="0" x2="320" y2="360"/>
+    <line x1="400" y1="0" x2="400" y2="360"/>
+    <line x1="480" y1="0" x2="480" y2="360"/>
+    <line x1="560" y1="0" x2="560" y2="360"/>
+  </g>
+
+  <!-- Title text -->
+  <text x="320" y="338" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="18" font-weight="300" letter-spacing="12" fill="#00e5ff" opacity="0.5" filter="url(#textGlow)">GRAVITON</text>
+
+  <!-- Subtle vignette overlay -->
+  <rect width="640" height="360" fill="url(#bgGrad)" opacity="0.15"/>
+</svg>

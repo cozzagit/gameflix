@@ -1,0 +1,142 @@
+{
+  "games": [
+    {
+      "id": "graviton",
+      "slug": "graviton",
+      "title": "Graviton",
+      "description": "Posiziona pozzi gravitazionali per guidare le particelle verso il bersaglio attraverso 20 livelli.",
+      "category": "brainlab",
+      "difficulty": 3,
+      "estimatedDuration": 15,
+      "scoringType": "points",
+      "tags": ["fisica", "puzzle", "strategia", "logica-spaziale"],
+      "supportsDaily": false,
+      "status": "ready",
+      "path": "./graviton",
+      "features": {
+        "levels": 20,
+        "tutorial": true,
+        "mobile": true,
+        "audio": true
+      }
+    },
+    {
+      "id": "arcanum",
+      "slug": "arcanum",
+      "title": "Arcanum",
+      "description": "Decifra gli enigmi per aprire le 15 Camere misteriose. Puzzle visivi, cifrari, sequenze e logica.",
+      "category": "brainlab",
+      "difficulty": 3,
+      "estimatedDuration": 20,
+      "scoringType": "points",
+      "tags": ["enigmi", "puzzle", "logica", "cifrari", "mistery"],
+      "supportsDaily": false,
+      "status": "ready",
+      "path": "./arcanum",
+      "features": {
+        "levels": 15,
+        "tutorial": false,
+        "mobile": true,
+        "audio": true
+      }
+    },
+    {
+      "id": "ombre",
+      "slug": "ombre",
+      "title": "Ombre",
+      "description": "Esplora scene oscure con la tua torcia, trova gli indizi nascosti e risolvi 8 misteri avvincenti. Ogni dettaglio potrebbe essere la chiave.",
+      "category": "mysterium",
+      "difficulty": 4,
+      "estimatedDuration": 20,
+      "scoringType": "points",
+      "tags": ["investigazione", "mistero", "osservazione", "atmosferico", "noir", "indizi"],
+      "supportsDaily": false,
+      "status": "ready",
+      "path": "./ombre",
+      "features": {
+        "levels": 8,
+        "tutorial": true,
+        "mobile": true,
+        "audio": true
+      }
+    },
+    {
+      "id": "alchimia",
+      "slug": "alchimia",
+      "title": "Alchimia",
+      "description": "Combina gli elementi per scoprire nuove sostanze. Da Terra, Acqua, Fuoco e Aria fino alla Civiltà. 50+ elementi da scoprire.",
+      "category": "tinkerfarm",
+      "difficulty": 2,
+      "estimatedDuration": 30,
+      "scoringType": "points",
+      "tags": ["alchimia", "combinazione", "scoperta", "elementi", "puzzle"],
+      "supportsDaily": false,
+      "status": "ready",
+      "path": "./alchimia",
+      "features": {
+        "elements": 57,
+        "chapters": 4,
+        "tutorial": true,
+        "mobile": true,
+        "audio": true
+      }
+    }
+  ],
+  "categories": [
+    {
+      "id": "brainlab",
+      "name": "BrainLab",
+      "slug": "brainlab",
+      "tagline": "Il tuo laboratorio mentale quotidiano",
+      "description": "Logica pura, ragionamento deduttivo e sfida intellettuale.",
+      "color": "#3B82F6",
+      "icon": "brain",
+      "displayOrder": 1,
+      "active": true
+    },
+    {
+      "id": "wordforge",
+      "name": "WordForge",
+      "slug": "wordforge",
+      "tagline": "Dove le parole prendono forma",
+      "description": "Cruciverba, anagrammi, catene di parole e sfide linguistiche.",
+      "color": "#F59E0B",
+      "icon": "type",
+      "displayOrder": 2,
+      "active": false
+    },
+    {
+      "id": "quizarena",
+      "name": "QuizArena",
+      "slug": "quizarena",
+      "tagline": "Metti alla prova quello che sai",
+      "description": "Quiz, trivia e sfide di cultura generale.",
+      "color": "#EF4444",
+      "icon": "zap",
+      "displayOrder": 3,
+      "active": false
+    },
+    {
+      "id": "mysterium",
+      "name": "Mysterium",
+      "slug": "mysterium",
+      "tagline": "Ogni dettaglio è un indizio",
+      "description": "Enigmi narrativi, investigazione, osservazione e scoperta.",
+      "color": "#7C3AED",
+      "icon": "search",
+      "displayOrder": 4,
+      "active": true
+    },
+    {
+      "id": "tinkerfarm",
+      "name": "TinkerFarm",
+      "slug": "tinkerfarm",
+      "tagline": "Costruisci, combina, crea",
+      "description": "Giochi creativi di costruzione, combinazione e scoperta.",
+      "color": "#10B981",
+      "icon": "flask-conical",
+      "displayOrder": 5,
+      "active": true
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "machina",
+  "version": "1.0.0",
+  "title": "Machina",
+  "description": "Manipola meccanismi intricati per risolvere 8 rompicapi meccanici. Ruota ingranaggi, aziona leve, collega tubi e sblocca casseforti in questo puzzle game premium con interazioni fisiche.",
+  "category": "brainlab",
+  "difficulty": 4,
+  "estimatedDuration": 30,
+  "thumbnailUrl": "/games/machina/assets/thumbnail.svg",
+  "tags": ["puzzle", "meccanica", "ingranaggi", "steampunk", "interattivo", "drag"],
+  "supportsDaily": false,
+  "scoringType": "points",
+  "minPlayersForLeaderboard": 5,
+  "features": {
+    "levels": 8,
+    "tutorial": true,
+    "mobile": true,
+    "audio": true,
+    "pwa": false
+  },
+  "releaseDate": null,
+  "status": "ready"
+}

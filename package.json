@@ -1,0 +1,13 @@
+{
+  "name": "gameflix",
+  "version": "0.1.0",
+  "description": "Gameflix — La tua palestra mentale quotidiana",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:graviton": "cd games/graviton && npm run dev",
+    "build:graviton": "cd games/graviton && npm run build"
+  },
+  "author": "Luca Cozza",
+  "license": "UNLICENSED"
+}

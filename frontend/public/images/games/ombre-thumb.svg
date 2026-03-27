@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="flashlight" cx="55%" cy="45%" r="35%">
+      <stop offset="0%" stop-color="#FFF5E0" stop-opacity="0.9"/>
+      <stop offset="30%" stop-color="#FFF5E0" stop-opacity="0.4"/>
+      <stop offset="60%" stop-color="#FFF5E0" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#FFF5E0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bg-glow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#1A1A2E"/>
+      <stop offset="100%" stop-color="#06060A"/>
+    </radialGradient>
+    <linearGradient id="glass-shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8D5B7" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#E8D5B7" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#E8D5B7" stop-opacity="0.4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Dark background -->
+  <rect width="400" height="300" fill="url(#bg-glow)"/>
+
+  <!-- Flashlight beam cone -->
+  <ellipse cx="220" cy="135" rx="140" ry="120" fill="url(#flashlight)"/>
+
+  <!-- Shadowy figure silhouette (left side, partially in dark) -->
+  <g opacity="0.25">
+    <!-- Body -->
+    <rect x="55" y="100" width="40" height="80" rx="3" fill="#1A1A2E"/>
+    <!-- Head -->
+    <circle cx="75" cy="90" r="18" fill="#1A1A2E"/>
+    <!-- Hat brim -->
+    <ellipse cx="75" cy="82" rx="24" ry="6" fill="#0A0A14"/>
+    <!-- Hat top -->
+    <rect x="60" y="62" width="30" height="20" rx="3" fill="#0A0A14"/>
+    <!-- Coat collar -->
+    <path d="M55,105 L65,115 L75,108 L85,115 L95,105" fill="#151520"/>
+  </g>
+
+  <!-- Magnifying glass (in the light) -->
+  <g transform="translate(210, 125)">
+    <!-- Glass circle -->
+    <circle cx="0" cy="0" r="28" fill="none" stroke="url(#glass-shine)" stroke-width="4"/>
+    <circle cx="0" cy="0" r="25" fill="rgba(232,213,183,0.05)"/>
+    <!-- Handle -->
+    <line x1="20" y1="20" x2="42" y2="42" stroke="#B8860B" stroke-width="5" stroke-linecap="round"/>
+    <line x1="20" y1="20" x2="42" y2="42" stroke="#8B6914" stroke-width="3" stroke-linecap="round"/>
+    <!-- Lens reflection -->
+    <path d="M-12,-18 Q-5,-22 5,-15" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+    <!-- Fingerprint inside lens -->
+    <g opacity="0.3">
+      <path d="M-5,-5 Q0,-8 5,-5" fill="none" stroke="#E63946" stroke-width="0.7"/>
+      <path d="M-7,-2 Q0,-6 7,-2" fill="none" stroke="#E63946" stroke-width="0.7"/>
+      <path d="M-8,1 Q0,-4 8,1" fill="none" stroke="#E63946" stroke-width="0.7"/>
+      <path d="M-7,4 Q0,-1 7,4" fill="none" stroke="#E63946" stroke-width="0.7"/>
+      <path d="M-5,7 Q0,2 5,7" fill="none" stroke="#E63946" stroke-width="0.7"/>
+    </g>
+  </g>
+
+  <!-- Floating clue elements (subtle) -->
+  <!-- Key -->
+  <g transform="translate(280, 90)" opacity="0.4">
+    <circle cx="0" cy="0" r="5" fill="none" stroke="#B8860B" stroke-width="1.5"/>
+    <line x1="5" y1="0" x2="18" y2="0" stroke="#B8860B" stroke-width="1.5"/>
+    <line x1="15" y1="-3" x2="15" y2="3" stroke="#B8860B" stroke-width="1"/>
+    <line x1="18" y1="-2" x2="18" y2="2" stroke="#B8860B" stroke-width="1"/>
+  </g>
+
+  <!-- Dust particles in beam -->
+  <g opacity="0.3">
+    <circle cx="180" cy="110" r="1" fill="#FFF5E0"/>
+    <circle cx="230" cy="100" r="0.8" fill="#FFF5E0"/>
+    <circle cx="250" cy="140" r="1.2" fill="#FFF5E0"/>
+    <circle cx="195" cy="155" r="0.7" fill="#FFF5E0"/>
+    <circle cx="240" cy="120" r="0.9" fill="#FFF5E0"/>
+    <circle cx="210" cy="160" r="1" fill="#FFF5E0"/>
+    <circle cx="265" cy="115" r="0.6" fill="#FFF5E0"/>
+  </g>
+
+  <!-- Title -->
+  <text x="200" y="235" text-anchor="middle" font-family="Georgia, serif" font-size="36" font-weight="bold" fill="#E8D5B7" opacity="0.9">OMBRE</text>
+  <text x="200" y="258" text-anchor="middle" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#7C3AED" opacity="0.7">Ogni ombra nasconde un segreto</text>
+
+  <!-- Accent line -->
+  <line x1="120" y1="270" x2="280" y2="270" stroke="#7C3AED" stroke-width="0.5" opacity="0.4"/>
+
+  <!-- Mysterium badge -->
+  <text x="200" y="288" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#7C3AED" opacity="0.4">MYSTERIUM</text>
+</svg>

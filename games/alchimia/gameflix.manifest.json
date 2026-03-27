@@ -1,0 +1,24 @@
+{
+  "id": "alchimia",
+  "version": "1.0.0",
+  "title": "Alchimia",
+  "description": "Combina gli elementi per scoprire nuove sostanze. Da Terra, Acqua, Fuoco e Aria fino alla Civiltà. 50+ elementi da scoprire.",
+  "category": "tinkerfarm",
+  "difficulty": 2,
+  "estimatedDuration": 30,
+  "thumbnailUrl": "/games/alchimia/assets/thumbnail.svg",
+  "tags": ["alchimia", "combinazione", "scoperta", "elementi", "puzzle"],
+  "supportsDaily": false,
+  "scoringType": "points",
+  "minPlayersForLeaderboard": 5,
+  "features": {
+    "elements": 55,
+    "chapters": 4,
+    "tutorial": true,
+    "mobile": true,
+    "audio": true,
+    "pwa": false
+  },
+  "releaseDate": null,
+  "status": "ready"
+}

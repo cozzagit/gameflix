@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1a0f2e"/>
+      <stop offset="100%" stop-color="#12081e"/>
+    </radialGradient>
+    <radialGradient id="glow-terra" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#C49B2F" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#C49B2F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-acqua" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#64B5F6" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#64B5F6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-fuoco" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF8A65" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#FF8A65" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-aria" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ECEFF1" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ECEFF1" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow-center" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFD700" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#FFD700" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg)"/>
+
+  <!-- Sparkles -->
+  <g opacity="0.4">
+    <polygon points="50,40 52,44 56,44 53,47 54,51 50,48 46,51 47,47 44,44 48,44" fill="#fff" opacity="0.3"/>
+    <polygon points="350,60 351,63 354,63 352,65 353,68 350,66 347,68 348,65 346,63 349,63" fill="#fff" opacity="0.25"/>
+    <polygon points="80,220 81,223 84,223 82,225 83,228 80,226 77,228 78,225 76,223 79,223" fill="#fff" opacity="0.35"/>
+    <polygon points="320,240 321,243 324,243 322,245 323,248 320,246 317,248 318,245 316,243 319,243" fill="#fff" opacity="0.2"/>
+    <polygon points="200,30 201,33 204,33 202,35 203,38 200,36 197,38 198,35 196,33 199,33" fill="#fff" opacity="0.3"/>
+    <polygon points="150,270 151,273 154,273 152,275 153,278 150,276 147,278 148,275 146,273 149,273" fill="#fff" opacity="0.25"/>
+  </g>
+
+  <!-- Connection lines (combination sparks) -->
+  <g opacity="0.3">
+    <line x1="120" y1="150" x2="200" y2="140" stroke="#FFD700" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="280" y1="150" x2="200" y2="140" stroke="#FFD700" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="160" y1="80" x2="200" y2="140" stroke="#FFD700" stroke-width="1" stroke-dasharray="4,4"/>
+    <line x1="240" y1="220" x2="200" y2="140" stroke="#FFD700" stroke-width="1" stroke-dasharray="4,4"/>
+  </g>
+
+  <!-- Element orbs -->
+  <!-- Terra (left) -->
+  <circle cx="120" cy="150" r="40" fill="url(#glow-terra)"/>
+  <circle cx="120" cy="150" r="24" fill="#8B6914" stroke="#C49B2F" stroke-width="1"/>
+  <path d="M108,155 Q114,145 120,155 Q126,145 132,155" stroke="#4CAF50" stroke-width="2" fill="none"/>
+  <path d="M110,157 A10,6 0 0,1 130,157" fill="#6D4C21"/>
+
+  <!-- Acqua (top-left) -->
+  <circle cx="160" cy="80" r="35" fill="url(#glow-acqua)"/>
+  <circle cx="160" cy="80" r="20" fill="#2196F3" stroke="#64B5F6" stroke-width="1"/>
+  <path d="M160,68 Q170,80 160,90 Q150,80 160,68Z" fill="#42A5F5"/>
+
+  <!-- Fuoco (right) -->
+  <circle cx="280" cy="150" r="40" fill="url(#glow-fuoco)"/>
+  <circle cx="280" cy="150" r="24" fill="#FF5722" stroke="#FF8A65" stroke-width="1"/>
+  <path d="M280,138 Q288,146 286,156 Q282,162 278,156 Q274,162 270,156 Q268,146 280,138Z" fill="#FFB74D"/>
+
+  <!-- Aria (bottom-right) -->
+  <circle cx="240" cy="220" r="35" fill="url(#glow-aria)"/>
+  <circle cx="240" cy="220" r="20" fill="#B0BEC5" stroke="#ECEFF1" stroke-width="1"/>
+  <path d="M228,215 Q234,210 240,215 Q246,220 252,215" stroke="rgba(255,255,255,0.7)" stroke-width="2" fill="none"/>
+  <path d="M230,222 Q236,217 242,222 Q248,227 254,222" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none"/>
+
+  <!-- Center result glow -->
+  <circle cx="200" cy="140" r="50" fill="url(#glow-center)" opacity="0.5"/>
+  <circle cx="200" cy="140" r="16" fill="#FFD700" stroke="#FFF176" stroke-width="1.5" opacity="0.9"/>
+  <text x="200" y="145" font-family="Georgia, serif" font-size="14" fill="#12081e" text-anchor="middle" font-weight="bold">?</text>
+
+  <!-- Spark particles around center -->
+  <g opacity="0.8">
+    <circle cx="185" cy="125" r="2" fill="#FFD700"/>
+    <circle cx="218" cy="130" r="1.5" fill="#FFA000"/>
+    <circle cx="195" cy="158" r="2" fill="#FFEB3B"/>
+    <circle cx="210" cy="122" r="1" fill="#FFF176"/>
+    <circle cx="190" cy="148" r="1.5" fill="#FFD700"/>
+    <circle cx="215" cy="152" r="1" fill="#FFA000"/>
+  </g>
+
+  <!-- Title -->
+  <text x="200" y="280" font-family="Georgia, serif" font-size="28" fill="#FFD700" text-anchor="middle" font-weight="bold">ALCHIMIA</text>
+</svg>

@@ -1,0 +1,23 @@
+{
+  "id": "cryptex",
+  "version": "1.0.0",
+  "title": "Cryptex",
+  "description": "Ruota i dischi del cryptex per comporre la parola segreta. 20 livelli con indovinelli, enigmi e definizioni in italiano. Ispirato al cryptex di Leonardo da Vinci.",
+  "category": "wordforge",
+  "difficulty": 3,
+  "estimatedDuration": 20,
+  "thumbnailUrl": "/games/cryptex/assets/thumbnail.svg",
+  "tags": ["parole", "puzzle", "enigmi", "italiano", "meccanico", "da-vinci"],
+  "supportsDaily": false,
+  "scoringType": "points",
+  "minPlayersForLeaderboard": 5,
+  "features": {
+    "levels": 20,
+    "tutorial": true,
+    "mobile": true,
+    "audio": true,
+    "pwa": true
+  },
+  "releaseDate": null,
+  "status": "ready"
+}

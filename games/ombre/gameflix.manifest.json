@@ -1,0 +1,23 @@
+{
+  "id": "ombre",
+  "version": "1.0.0",
+  "title": "Ombre",
+  "description": "Esplora scene oscure con la tua torcia, trova gli indizi nascosti e risolvi 8 misteri avvincenti. Ogni dettaglio potrebbe essere la chiave.",
+  "category": "mysterium",
+  "difficulty": 4,
+  "estimatedDuration": 20,
+  "thumbnailUrl": "/images/games/ombre-thumb.svg",
+  "tags": ["investigazione", "mistero", "osservazione", "atmosferico", "noir", "indizi"],
+  "supportsDaily": false,
+  "scoringType": "points",
+  "minPlayersForLeaderboard": 5,
+  "features": {
+    "levels": 8,
+    "tutorial": true,
+    "mobile": true,
+    "audio": true,
+    "pwa": false
+  },
+  "releaseDate": null,
+  "status": "ready"
+}

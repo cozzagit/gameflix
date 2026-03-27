@@ -1,0 +1,23 @@
+{
+  "id": "intreccio",
+  "version": "1.0.0",
+  "title": "Intreccio",
+  "description": "Tessi parole su una griglia esagonale dorata. Collega le lettere per trovare tutte le parole nascoste. 12 livelli di sfida linguistica.",
+  "category": "wordforge",
+  "difficulty": 3,
+  "estimatedDuration": 15,
+  "thumbnailUrl": "/images/games/intreccio-thumb.svg",
+  "tags": ["parole", "puzzle", "esagonale", "italiano", "griglia", "wordforge"],
+  "supportsDaily": false,
+  "scoringType": "points",
+  "minPlayersForLeaderboard": 5,
+  "features": {
+    "levels": 12,
+    "tutorial": true,
+    "mobile": true,
+    "audio": true,
+    "pwa": true
+  },
+  "releaseDate": null,
+  "status": "ready"
+}

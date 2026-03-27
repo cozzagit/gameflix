@@ -1,0 +1,23 @@
+{
+  "id": "codice",
+  "version": "1.0.0",
+  "title": "Codice",
+  "description": "Decifra messaggi segreti con strumenti di crittografia: cifrari di Cesare, Vigenère, Morse e altro. 10 livelli da agente segreto.",
+  "category": "mysterium",
+  "difficulty": 4,
+  "estimatedDuration": 20,
+  "thumbnailUrl": "/images/games/codice-thumb.svg",
+  "tags": ["crittografia", "puzzle", "cifrari", "spy", "decodifica", "mistero"],
+  "supportsDaily": false,
+  "scoringType": "points",
+  "minPlayersForLeaderboard": 5,
+  "features": {
+    "levels": 10,
+    "tutorial": true,
+    "mobile": true,
+    "audio": true,
+    "pwa": false
+  },
+  "releaseDate": null,
+  "status": "ready"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "graviton",
+  "version": "1.0.0",
+  "title": "Graviton",
+  "description": "Posiziona pozzi gravitazionali per guidare le particelle verso il bersaglio. 20 livelli di difficolta crescente con ostacoli, fisica realistica e sistema a 3 stelle.",
+  "category": "brainlab",
+  "difficulty": 3,
+  "estimatedDuration": 15,
+  "thumbnailUrl": "/games/graviton/assets/thumbnail.svg",
+  "tags": ["fisica", "puzzle", "strategia", "logica-spaziale", "gravita"],
+  "supportsDaily": false,
+  "scoringType": "points",
+  "minPlayersForLeaderboard": 5,
+  "features": {
+    "levels": 20,
+    "tutorial": true,
+    "mobile": true,
+    "audio": true,
+    "pwa": true
+  },
+  "releaseDate": null,
+  "status": "ready"
+}

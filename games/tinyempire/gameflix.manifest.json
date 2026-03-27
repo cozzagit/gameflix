@@ -1,0 +1,22 @@
+{
+  "id": "tinyempire",
+  "version": "1.0.0",
+  "title": "Tiny Empire",
+  "description": "Costruisci il tuo impero dall'Età della Pietra all'Era Moderna. Raccogli risorse, addestra unità, difenditi dai raid nemici e avanza attraverso 9 ere storiche.",
+  "category": "tinkerfarm",
+  "difficulty": 4,
+  "estimatedDuration": 30,
+  "thumbnailUrl": "/images/games/tinyempire-thumb.svg",
+  "tags": ["strategia", "gestionale", "costruzione", "risorse", "storico", "isometrico"],
+  "supportsDaily": false,
+  "scoringType": "points",
+  "minPlayersForLeaderboard": 5,
+  "features": {
+    "levels": 9,
+    "tutorial": false,
+    "mobile": true,
+    "audio": false
+  },
+  "releaseDate": null,
+  "status": "ready"
+}
