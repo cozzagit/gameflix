@@ -42,19 +42,23 @@ export class Game {
   }
 
   private resize(): void {
-    const ratio = GAME_W / GAME_H;
-    let w = window.innerWidth;
-    let h = window.innerHeight;
-    if (w / h > ratio) {
-      w = h * ratio;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const isPortrait = h > w;
+    let scale: number;
+    if (isPortrait) {
+      scale = w / GAME_W;
     } else {
-      h = w / ratio;
+      scale = Math.min(w / GAME_W, h / GAME_H);
     }
     this.canvas.width = GAME_W;
     this.canvas.height = GAME_H;
-    this.canvas.style.width = `${w}px`;
-    this.canvas.style.height = `${h}px`;
-    this.canvas.style.marginTop = `${(window.innerHeight - h) / 2}px`;
+    this.canvas.style.width = `${GAME_W * scale}px`;
+    this.canvas.style.height = `${GAME_H * scale}px`;
+    this.canvas.style.position = 'absolute';
+    this.canvas.style.left = `${(w - GAME_W * scale) / 2}px`;
+    this.canvas.style.top = `${Math.max(0, (h - GAME_H * scale) / 2)}px`;
+    this.canvas.style.marginTop = '0';
     this.input.updateScale();
   }
 

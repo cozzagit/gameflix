@@ -6,18 +6,18 @@
 
 html, body {
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background: #0D0D1A;
   touch-action: none;
+  -webkit-touch-callout: none;
   user-select: none;
   -webkit-user-select: none;
-  -webkit-touch-callout: none;
 }
 
-canvas {
+canvas#game {
   display: block;
-  margin: 0 auto;
-  cursor: default;
-  image-rendering: auto;
+  touch-action: none;
+  -webkit-touch-callout: none;
 }

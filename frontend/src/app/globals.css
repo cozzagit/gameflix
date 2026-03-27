@@ -103,3 +103,25 @@ body {
   50% { width: 70%; margin-left: 15%; }
   100% { width: 0%; margin-left: 100%; }
 }
+
+/* Hide platform navigation when playing a game */
+body.playing-game .bottom-nav {
+  display: none !important;
+}
+body.playing-game .top-bar {
+  display: none !important;
+}
+body.playing-game main {
+  padding-bottom: 0 !important;
+}
+
+/* Landscape suggestion overlay animation */
+@keyframes rotatePhone {
+  0%, 30% { transform: rotate(0deg); }
+  50%, 80% { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.animate-rotate-phone {
+  animation: rotatePhone 2.5s ease-in-out infinite;
+}

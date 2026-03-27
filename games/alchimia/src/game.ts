@@ -69,13 +69,22 @@ export function createGame(canvas: HTMLCanvasElement): void {
   canvas.width = W;
   canvas.height = H;
 
-  // Scale canvas to fit viewport
+  // Scale canvas to fit viewport, filling width on portrait mobile
   function resizeCanvas(): void {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const scale = Math.min(vw / W, vh / H);
+    const isPortrait = vh > vw;
+    let scale: number;
+    if (isPortrait) {
+      scale = vw / W;
+    } else {
+      scale = Math.min(vw / W, vh / H);
+    }
     canvas.style.width = `${W * scale}px`;
     canvas.style.height = `${H * scale}px`;
+    canvas.style.position = 'absolute';
+    canvas.style.left = `${(vw - W * scale) / 2}px`;
+    canvas.style.top = `${Math.max(0, (vh - H * scale) / 2)}px`;
   }
   resizeCanvas();
   window.addEventListener('resize', resizeCanvas);

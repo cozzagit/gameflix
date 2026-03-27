@@ -19,11 +19,13 @@ import {
   Gamepad2,
   Maximize,
   Minimize,
+  X,
 } from 'lucide-react';
 import { cn, formatNumber, formatDuration } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { XpPopup } from '@/components/gamification/xp-popup';
+import { LandscapeSuggestion } from '@/components/game/landscape-suggestion';
 import { useAuthStore } from '@/lib/stores/auth-store';
 import api from '@/lib/api';
 
@@ -104,6 +106,12 @@ export default function PlayPage({ params }: { params: Promise<{ slug: string }>
     .split('-')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
+
+  // Hide platform navigation (TopBar + BottomNav) while playing
+  useEffect(() => {
+    document.body.classList.add('playing-game');
+    return () => document.body.classList.remove('playing-game');
+  }, []);
 
   // Register play session when page loads (increments play count)
   useEffect(() => {
@@ -346,9 +354,9 @@ export default function PlayPage({ params }: { params: Promise<{ slug: string }>
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)]">
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-gameflix-surface border-b border-gameflix-border">
+    <div className="flex flex-col h-[100dvh] md:h-[calc(100vh-64px)]">
+      {/* Desktop top bar — hidden on mobile */}
+      <div className="hidden md:flex items-center justify-between px-4 py-2 bg-gameflix-surface border-b border-gameflix-border">
         <div className="flex items-center gap-3">
           <Link
             href={`/games/${slug}`}
@@ -394,11 +402,33 @@ export default function PlayPage({ params }: { params: Promise<{ slug: string }>
 
       {/* Game area */}
       <div ref={gameAreaRef} className="flex-1 relative bg-gameflix-bg">
-        {/* Fullscreen exit button — only visible in fullscreen mode */}
+        {/* Mobile floating controls — visible only on mobile */}
+        <div className="md:hidden absolute top-3 left-3 right-3 z-30 flex items-center justify-between pointer-events-none">
+          {/* Exit button */}
+          <Link
+            href={`/games/${slug}`}
+            onClick={handleExit}
+            className="pointer-events-auto w-10 h-10 flex items-center justify-center rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white/80 active:bg-black/70 transition-colors"
+            title="Esci"
+          >
+            <X className="w-5 h-5" />
+          </Link>
+
+          {/* Right side: fullscreen */}
+          <button
+            onClick={toggleFullscreen}
+            className="pointer-events-auto w-10 h-10 flex items-center justify-center rounded-full bg-black/50 backdrop-blur-sm border border-white/10 text-white/80 active:bg-black/70 transition-colors cursor-pointer"
+            title={isFullscreen ? 'Esci da schermo intero' : 'Schermo intero'}
+          >
+            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+          </button>
+        </div>
+
+        {/* Fullscreen exit button — only visible in fullscreen mode on desktop */}
         {isFullscreen && (
           <button
             onClick={toggleFullscreen}
-            className="absolute top-4 right-4 z-30 flex items-center gap-2 px-3 py-2 rounded-xl bg-black/60 backdrop-blur-sm border border-white/10 text-white/70 hover:text-white hover:bg-black/80 transition-all cursor-pointer group"
+            className="hidden md:flex absolute top-4 right-4 z-30 items-center gap-2 px-3 py-2 rounded-xl bg-black/60 backdrop-blur-sm border border-white/10 text-white/70 hover:text-white hover:bg-black/80 transition-all cursor-pointer group"
             title="Esci da schermo intero"
           >
             <Minimize className="w-4 h-4" />
@@ -580,6 +610,9 @@ export default function PlayPage({ params }: { params: Promise<{ slug: string }>
           </div>
         )}
       </div>
+
+      {/* Landscape suggestion overlay for mobile portrait */}
+      <LandscapeSuggestion />
 
       <XpPopup amount={gameResult?.xpEarned || 0} show={showXp} onDone={() => setShowXp(false)} />
     </div>

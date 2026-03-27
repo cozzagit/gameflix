@@ -187,20 +187,17 @@ export class Game {
     const dpr = window.devicePixelRatio || 1;
     const windowW = window.innerWidth;
     const windowH = window.innerHeight;
+    const isPortrait = windowH > windowW;
 
-    const gameAspect = GAME_WIDTH / GAME_HEIGHT;
-    const windowAspect = windowW / windowH;
-
-    let drawW: number;
-    let drawH: number;
-
-    if (windowAspect > gameAspect) {
-      drawH = windowH;
-      drawW = drawH * gameAspect;
+    let scale: number;
+    if (isPortrait) {
+      scale = windowW / GAME_WIDTH;
     } else {
-      drawW = windowW;
-      drawH = drawW / gameAspect;
+      scale = Math.min(windowW / GAME_WIDTH, windowH / GAME_HEIGHT);
     }
+
+    const drawW = GAME_WIDTH * scale;
+    const drawH = GAME_HEIGHT * scale;
 
     this.canvas.width = drawW * dpr;
     this.canvas.height = drawH * dpr;
@@ -208,11 +205,11 @@ export class Game {
     this.canvas.style.height = `${drawH}px`;
     this.canvas.style.position = 'absolute';
     this.canvas.style.left = `${(windowW - drawW) / 2}px`;
-    this.canvas.style.top = `${(windowH - drawH) / 2}px`;
+    this.canvas.style.top = `${Math.max(0, (windowH - drawH) / 2)}px`;
 
-    this.displayScale = drawW / GAME_WIDTH;
+    this.displayScale = scale;
     this.offsetX = (windowW - drawW) / 2;
-    this.offsetY = (windowH - drawH) / 2;
+    this.offsetY = Math.max(0, (windowH - drawH) / 2);
     this.scaleX = (drawW * dpr) / GAME_WIDTH;
     this.scaleY = (drawH * dpr) / GAME_HEIGHT;
   }

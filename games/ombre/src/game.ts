@@ -55,9 +55,18 @@ export class Game {
   private resize(): void {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const scale = Math.min(w / GAME_W, h / GAME_H);
+    const isPortrait = h > w;
+    let scale: number;
+    if (isPortrait) {
+      scale = w / GAME_W;
+    } else {
+      scale = Math.min(w / GAME_W, h / GAME_H);
+    }
     this.canvas.style.width = `${GAME_W * scale}px`;
     this.canvas.style.height = `${GAME_H * scale}px`;
+    this.canvas.style.position = 'absolute';
+    this.canvas.style.left = `${(w - GAME_W * scale) / 2}px`;
+    this.canvas.style.top = `${Math.max(0, (h - GAME_H * scale) / 2)}px`;
     this.scaleX = scale;
     this.scaleY = scale;
     const rect = this.canvas.getBoundingClientRect();

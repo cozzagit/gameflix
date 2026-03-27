@@ -113,10 +113,17 @@ export class Game {
     const dpr = window.devicePixelRatio || 1;
     const windowW = window.innerWidth;
     const windowH = window.innerHeight;
+    const isPortrait = windowH > windowW;
 
-    const scaleToFit = Math.min(windowW / CANVAS_W, windowH / CANVAS_H);
-    const displayW = CANVAS_W * scaleToFit;
-    const displayH = CANVAS_H * scaleToFit;
+    let scale: number;
+    if (isPortrait) {
+      scale = windowW / CANVAS_W;
+    } else {
+      scale = Math.min(windowW / CANVAS_W, windowH / CANVAS_H);
+    }
+
+    const displayW = CANVAS_W * scale;
+    const displayH = CANVAS_H * scale;
 
     this.canvas.width = CANVAS_W * dpr;
     this.canvas.height = CANVAS_H * dpr;
@@ -128,7 +135,7 @@ export class Game {
     this.scaleX = CANVAS_W / displayW;
     this.scaleY = CANVAS_H / displayH;
     this.offsetX = (windowW - displayW) / 2;
-    this.offsetY = (windowH - displayH) / 2;
+    this.offsetY = Math.max(0, (windowH - displayH) / 2);
 
     this.canvas.style.position = 'absolute';
     this.canvas.style.left = `${this.offsetX}px`;

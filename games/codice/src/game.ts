@@ -94,11 +94,20 @@ export class Game {
     this.canvas.height = CANVAS_H;
 
     const resize = () => {
-      const scaleX = window.innerWidth / CANVAS_W;
-      const scaleY = window.innerHeight / CANVAS_H;
-      const scale = Math.min(scaleX, scaleY);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const isPortrait = h > w;
+      let scale: number;
+      if (isPortrait) {
+        scale = w / CANVAS_W;
+      } else {
+        scale = Math.min(w / CANVAS_W, h / CANVAS_H);
+      }
       this.canvas.style.width = `${CANVAS_W * scale}px`;
       this.canvas.style.height = `${CANVAS_H * scale}px`;
+      this.canvas.style.position = 'absolute';
+      this.canvas.style.left = `${(w - CANVAS_W * scale) / 2}px`;
+      this.canvas.style.top = `${Math.max(0, (h - CANVAS_H * scale) / 2)}px`;
     };
     resize();
     window.addEventListener('resize', resize);

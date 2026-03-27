@@ -13,20 +13,25 @@ function init(): void {
   canvas.width = WIDTH;
   canvas.height = HEIGHT;
 
-  // Scale canvas to fit viewport while maintaining aspect ratio
+  // Scale canvas to fit viewport, filling width on portrait mobile
   function resize(): void {
-    const aspectRatio = WIDTH / HEIGHT;
-    let displayWidth = window.innerWidth;
-    let displayHeight = window.innerHeight;
-
-    if (displayWidth / displayHeight > aspectRatio) {
-      displayWidth = displayHeight * aspectRatio;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const isPortrait = h > w;
+    let scale: number;
+    if (isPortrait) {
+      scale = w / WIDTH;
     } else {
-      displayHeight = displayWidth / aspectRatio;
+      scale = Math.min(w / WIDTH, h / HEIGHT);
     }
+    const displayWidth = WIDTH * scale;
+    const displayHeight = HEIGHT * scale;
 
     canvas.style.width = `${displayWidth}px`;
     canvas.style.height = `${displayHeight}px`;
+    canvas.style.position = 'absolute';
+    canvas.style.left = `${(w - displayWidth) / 2}px`;
+    canvas.style.top = `${Math.max(0, (h - displayHeight) / 2)}px`;
   }
 
   resize();
