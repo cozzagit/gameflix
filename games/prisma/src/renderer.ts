@@ -185,6 +185,21 @@ export class Renderer {
     }
   }
 
+  /** Get color name in Italian for a beam color */
+  private colorLabel(c: BeamColor): string {
+    const key = `${c.r},${c.g},${c.b}`;
+    const labels: Record<string, string> = {
+      '1,1,1': 'Bianco',
+      '1,0,0': 'Rosso',
+      '0,1,0': 'Verde',
+      '0,0,1': 'Blu',
+      '1,1,0': 'Giallo',
+      '1,0,1': 'Magenta',
+      '0,1,1': 'Ciano',
+    };
+    return labels[key] || '';
+  }
+
   /** Draw targets */
   drawTargets(targets: Target[]): void {
     const ctx = this.ctx;
@@ -252,6 +267,19 @@ export class Renderer {
       ctx.moveTo(cx, cy - radius - 5);
       ctx.lineTo(cx, cy + radius + 5);
       ctx.stroke();
+
+      // Color label below/above the target
+      ctx.globalAlpha = 0.9;
+      const label = this.colorLabel(target.requiredColor);
+      if (label) {
+        ctx.fillStyle = color;
+        ctx.font = `bold ${Math.max(10, cs * 0.16)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowBlur = 4;
+        ctx.fillText(label, cx, cy + radius + 4);
+      }
 
       ctx.restore();
     }
@@ -531,11 +559,21 @@ export class Renderer {
       // Selection highlight
       if (isSelected) {
         ctx.save();
-        ctx.shadowColor = '#6688ff';
-        ctx.shadowBlur = 15;
-        ctx.strokeStyle = '#6688ff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(startX - 2, toolbarY + 4, itemSize + 4, itemSize + 4);
+        // Bright animated glow border
+        ctx.shadowColor = '#88aaff';
+        ctx.shadowBlur = 20 + Math.sin(this.time * 4) * 5;
+        ctx.strokeStyle = '#88aaff';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(startX - 4, toolbarY + 2, itemSize + 8, itemSize + 8);
+        // Filled background highlight
+        ctx.fillStyle = 'rgba(100, 140, 255, 0.15)';
+        ctx.fillRect(startX - 4, toolbarY + 2, itemSize + 8, itemSize + 8);
+        // "Selezionato" label
+        ctx.fillStyle = '#88aaff';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('SELEZ.', cx, toolbarY + 2);
         ctx.restore();
       }
 
@@ -647,12 +685,12 @@ export class Renderer {
     ctx.fillStyle = 'rgba(15, 15, 40, 0.7)';
     ctx.fillRect(0, 0, this.width, 36);
 
-    // Level info
+    // Level info - leave space for exit button on the left
     ctx.fillStyle = '#8899cc';
     ctx.font = 'bold 14px sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`Livello ${levelNum}: ${levelName}`, 16, 18);
+    ctx.fillText(`Livello ${levelNum}/10: ${levelName}`, 60, 18);
 
     // Timer
     const mins = Math.floor(elapsed / 60);
@@ -753,5 +791,101 @@ export class Renderer {
     const retry: [number, number, number, number] = [this.width / 2 - 120, centerY + 120, 100, 40];
     const next: [number, number, number, number] | null = levelNum < 10 ? [this.width / 2 + 20, centerY + 120, 100, 40] : null;
     return { retry, next };
+  }
+
+  /** Draw exit button in top-left corner */
+  drawExitButton(): void {
+    const ctx = this.ctx;
+    const x = 10;
+    const y = 4;
+    const size = 28;
+
+    ctx.save();
+    // Button background
+    ctx.fillStyle = 'rgba(180, 60, 60, 0.7)';
+    ctx.beginPath();
+    ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // X symbol
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    const pad = 8;
+    ctx.beginPath();
+    ctx.moveTo(x + pad, y + pad);
+    ctx.lineTo(x + size - pad, y + size - pad);
+    ctx.moveTo(x + size - pad, y + pad);
+    ctx.lineTo(x + pad, y + size - pad);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  /** Draw tutorial overlay with fading messages */
+  drawTutorialOverlay(
+    messages: string[],
+    tutorialTime: number,
+    messageDuration: number,
+    fadeDuration: number,
+  ): void {
+    const ctx = this.ctx;
+    const totalDuration = messages.length * messageDuration;
+
+    // Don't draw if tutorial is over
+    if (tutorialTime >= totalDuration + fadeDuration) return;
+
+    // Determine which message to show
+    const msgIndex = Math.min(
+      Math.floor(tutorialTime / messageDuration),
+      messages.length - 1,
+    );
+    const msgTime = tutorialTime - msgIndex * messageDuration;
+
+    // Calculate alpha for fade in/out
+    let alpha = 1;
+    if (msgTime < fadeDuration) {
+      alpha = msgTime / fadeDuration;
+    } else if (msgTime > messageDuration - fadeDuration) {
+      alpha = Math.max(0, (messageDuration - msgTime) / fadeDuration);
+    }
+
+    // If past all messages, fade out the last one
+    if (tutorialTime >= totalDuration) {
+      alpha = Math.max(0, 1 - (tutorialTime - totalDuration) / fadeDuration);
+    }
+
+    if (alpha <= 0) return;
+
+    const message = messages[msgIndex];
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    // Semi-transparent background strip
+    const stripY = this.gridOffsetY - 50;
+    const stripH = 40;
+    ctx.fillStyle = 'rgba(10, 10, 40, 0.75)';
+    ctx.fillRect(40, stripY, this.width - 80, stripH);
+    ctx.strokeStyle = 'rgba(100, 130, 255, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(40, stripY, this.width - 80, stripH);
+
+    // Message text
+    ctx.fillStyle = '#ccddff';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(message, this.width / 2, stripY + stripH / 2);
+
+    // Step indicator (dots)
+    const dotY = stripY + stripH + 10;
+    for (let i = 0; i < messages.length; i++) {
+      ctx.beginPath();
+      ctx.arc(this.width / 2 + (i - (messages.length - 1) / 2) * 14, dotY, 3, 0, Math.PI * 2);
+      ctx.fillStyle = i === msgIndex ? '#88aaff' : 'rgba(100, 130, 255, 0.3)';
+      ctx.fill();
+    }
+
+    ctx.restore();
   }
 }

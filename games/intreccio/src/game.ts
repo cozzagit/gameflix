@@ -28,6 +28,14 @@ const STORAGE_KEY = 'intreccio_save';
 const SHAKE_DURATION = 300; // ms
 const FOUND_ANIM_DURATION = 600; // ms
 
+/** Tutorial messages for level 1 */
+const TUTORIAL_MESSAGES = [
+  'Clicca su una lettera e trascina per collegare le lettere adiacenti',
+  'Forma parole italiane per completare il livello',
+];
+const TUTORIAL_MSG_DURATION = 4.0; // seconds per message
+const TUTORIAL_FADE_TIME = 0.8;
+
 export class Game {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
@@ -44,6 +52,10 @@ export class Game {
   private selectedCells: HexCell[] = [];
   private isSelecting = false;
   private currentWord = '';
+
+  // Tutorial state
+  private tutorialTime = 0;
+  private tutorialDismissed = false;
 
   // Timing & scoring
   private levelStartTime = 0;
@@ -69,8 +81,8 @@ export class Game {
   private levelSelectRects: { id: number; x: number; y: number; w: number; h: number }[] = [];
   private levelSelectBackRect = { x: 0, y: 0, w: 0, h: 0 };
 
-  // Back button in playing mode
-  private backBtnRect = { x: 20, y: 20, w: 100, h: 34 };
+  // Back/exit button in playing mode
+  private backBtnRect = { x: 12, y: 12, w: 36, h: 36 };
 
   // Frame & input
   private frameCount = 0;
@@ -223,11 +235,16 @@ export class Game {
     if (this.screen === 'playing') {
       if (this.levelCompleteTriggered) return;
 
-      // Back button
+      // Back/exit button
       if (this.hitRect(x, y, this.backBtnRect)) {
         playButtonClick();
         this.screen = 'levelSelect';
         return;
+      }
+
+      // Dismiss tutorial on first interaction
+      if (this.currentLevelIdx === 0 && !this.tutorialDismissed) {
+        this.tutorialDismissed = true;
       }
 
       // Start hex selection
@@ -445,6 +462,8 @@ export class Game {
 
     this.levelStartTime = performance.now();
     this.elapsedTime = 0;
+    this.tutorialTime = 0;
+    this.tutorialDismissed = false;
     this.particles.clear();
   }
 
@@ -553,6 +572,11 @@ export class Game {
     if (this.screen === 'playing') {
       if (!this.levelCompleteTriggered) {
         this.elapsedTime = (now - this.levelStartTime) / 1000;
+      }
+
+      // Update tutorial time for first level
+      if (this.currentLevelIdx === 0 && !this.tutorialDismissed) {
+        this.tutorialTime += 1 / 60; // approximate 60fps
       }
 
       // Shake animation
@@ -666,6 +690,11 @@ export class Game {
       this.drawBackButton();
     }
 
+    // Tutorial overlay for level 1
+    if (this.currentLevelIdx === 0 && !this.tutorialDismissed) {
+      this.drawTutorialOverlay();
+    }
+
     // Particles
     this.particles.draw(ctx);
 
@@ -687,25 +716,92 @@ export class Game {
     }
   }
 
+  private drawTutorialOverlay(): void {
+    const ctx = this.ctx;
+    const totalDuration = TUTORIAL_MESSAGES.length * TUTORIAL_MSG_DURATION;
+
+    if (this.tutorialTime >= totalDuration + TUTORIAL_FADE_TIME) return;
+
+    const msgIndex = Math.min(
+      Math.floor(this.tutorialTime / TUTORIAL_MSG_DURATION),
+      TUTORIAL_MESSAGES.length - 1,
+    );
+    const msgTime = this.tutorialTime - msgIndex * TUTORIAL_MSG_DURATION;
+
+    let alpha = 1;
+    if (msgTime < TUTORIAL_FADE_TIME) {
+      alpha = msgTime / TUTORIAL_FADE_TIME;
+    } else if (msgTime > TUTORIAL_MSG_DURATION - TUTORIAL_FADE_TIME) {
+      alpha = Math.max(0, (TUTORIAL_MSG_DURATION - msgTime) / TUTORIAL_FADE_TIME);
+    }
+    if (this.tutorialTime >= totalDuration) {
+      alpha = Math.max(0, 1 - (this.tutorialTime - totalDuration) / TUTORIAL_FADE_TIME);
+    }
+    if (alpha <= 0) return;
+
+    const message = TUTORIAL_MESSAGES[msgIndex];
+    const areaW = CANVAS_W - PANEL_WIDTH;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    // Semi-transparent strip
+    const stripY = 55;
+    const stripH = 36;
+    ctx.fillStyle = 'rgba(30,22,14,0.85)';
+    ctx.fillRect(50, stripY, areaW - 100, stripH);
+    ctx.strokeStyle = 'rgba(180,140,60,0.4)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(50, stripY, areaW - 100, stripH);
+
+    // Text
+    ctx.fillStyle = COLORS.parchment;
+    ctx.font = '15px "Georgia", serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(message, areaW / 2, stripY + stripH / 2);
+
+    // Dots
+    const dotY = stripY + stripH + 8;
+    for (let i = 0; i < TUTORIAL_MESSAGES.length; i++) {
+      ctx.beginPath();
+      ctx.arc(areaW / 2 + (i - (TUTORIAL_MESSAGES.length - 1) / 2) * 14, dotY, 3, 0, Math.PI * 2);
+      ctx.fillStyle = i === msgIndex ? COLORS.gold : 'rgba(180,140,60,0.3)';
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
   private drawBackButton(): void {
     const ctx = this.ctx;
     const { x, y, w, h } = this.backBtnRect;
+    const cx = x + w / 2;
+    const cy = y + h / 2;
+    const radius = w / 2;
 
     ctx.save();
-    ctx.fillStyle = 'rgba(60,45,30,0.6)';
+    // Circle background
+    ctx.fillStyle = 'rgba(140,50,50,0.7)';
     ctx.beginPath();
-    ctx.roundRect(x, y, w, h, 4);
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = 'rgba(160,130,80,0.3)';
+    ctx.strokeStyle = 'rgba(200,100,100,0.5)';
     ctx.lineWidth = 1;
     ctx.stroke();
 
-    ctx.font = '14px "Georgia", serif';
-    ctx.fillStyle = COLORS.parchmentDark;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('\u2190 Indietro', x + w / 2, y + h / 2);
+    // X symbol
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    const pad = 10;
+    ctx.beginPath();
+    ctx.moveTo(x + pad, y + pad);
+    ctx.lineTo(x + w - pad, y + h - pad);
+    ctx.moveTo(x + w - pad, y + pad);
+    ctx.lineTo(x + pad, y + h - pad);
+    ctx.stroke();
     ctx.restore();
   }
 }

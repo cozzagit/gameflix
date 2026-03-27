@@ -40,6 +40,12 @@ export type CipherType = 'caesar' | 'reverse' | 'a1z26' | 'keyword' | 'morse' | 
 
 export type GameScreen = 'title' | 'levelSelect' | 'playing' | 'levelComplete' | 'gameComplete';
 
+export interface TutorialInfo {
+  title: string;
+  lines: string[];
+  example?: string;
+}
+
 export interface LevelDef {
   id: number;
   title: string;

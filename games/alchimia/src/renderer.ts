@@ -1139,6 +1139,11 @@ export function render(ctx: CanvasRenderingContext2D, state: GameState, time: nu
     return;
   }
 
+  if (state.screen === 'tutorial') {
+    renderTutorial(ctx, state, time);
+    return;
+  }
+
   if (state.screen === 'chapter-complete') {
     renderChapterComplete(ctx, state, time);
     return;
@@ -1148,9 +1153,11 @@ export function render(ctx: CanvasRenderingContext2D, state: GameState, time: nu
   renderWorkspacePanel(ctx, state, time);
   renderCombineArea(ctx, state, time);
   renderRightPanel(ctx, state, time);
+  renderDiscoveryLog(ctx, state, time);
   renderParticlesAndEffects(ctx, state, time);
   renderHeldElement(ctx, state, time);
   renderHintText(ctx, state, time);
+  renderExitButton(ctx, state, time);
 }
 
 function renderTitle(ctx: CanvasRenderingContext2D, state: GameState, time: number): void {
@@ -1281,11 +1288,35 @@ function renderWorkspacePanel(ctx: CanvasRenderingContext2D, state: GameState, t
 }
 
 function renderCombineArea(ctx: CanvasRenderingContext2D, state: GameState, time: number): void {
-  // Subtle center decoration
-  ctx.strokeStyle = 'rgba(179,157,219,0.08)';
-  ctx.lineWidth = 1;
   const cx = COMBINE_AREA_X + COMBINE_AREA_W / 2;
   const cy = H / 2;
+
+  // Drop zone visual boundary
+  const dzMargin = 20;
+  const dzX = COMBINE_AREA_X + dzMargin;
+  const dzY = dzMargin;
+  const dzW = COMBINE_AREA_W - dzMargin * 2;
+  const dzH = H - dzMargin * 2;
+
+  // Dashed border for drop zone
+  ctx.save();
+  ctx.strokeStyle = 'rgba(179,157,219,0.15)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([8, 8]);
+  ctx.strokeRect(dzX, dzY, dzW, dzH);
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  // Drop zone label at the top
+  ctx.fillStyle = 'rgba(179,157,219,0.25)';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText('TRASCINA QUI PER COMBINARE', cx, 8);
+
+  // Subtle center decoration
+  ctx.strokeStyle = 'rgba(179,157,219,0.06)';
+  ctx.lineWidth = 1;
   for (let r = 60; r < 200; r += 40) {
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -1338,11 +1369,18 @@ function renderCombineArea(ctx: CanvasRenderingContext2D, state: GameState, time
 
   // Hint for empty area
   if (state.placedElements.length === 0 && !state.heldElement && !state.mergeAnim) {
-    ctx.fillStyle = 'rgba(179,157,219,0.2)';
-    ctx.font = '16px Georgia, serif';
+    // Animated hint
+    const hintAlpha = 0.3 + Math.sin(time * 1.5) * 0.1;
+    ctx.fillStyle = `rgba(179,157,219,${hintAlpha})`;
+    ctx.font = '18px Georgia, serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('Trascina gli elementi qui per combinarli', cx, cy);
+    ctx.fillText('Trascina un elemento su un altro', cx, cy - 20);
+    ctx.fillText('per combinarli', cx, cy + 10);
+
+    // Arrow decoration
+    ctx.font = '28px Georgia, serif';
+    ctx.fillText('\u2b07', cx, cy + 50);
   }
 }
 
@@ -1368,13 +1406,20 @@ function renderRightPanel(ctx: CanvasRenderingContext2D, state: GameState, time:
   ctx.textBaseline = 'middle';
   ctx.fillText('Progresso', rx + RIGHT_PANEL_W / 2, 30);
 
+  // Current chapter indicator
+  const currentCh = CHAPTERS[state.currentChapter] || CHAPTERS[0];
+  ctx.fillStyle = '#B39DDB';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText(`Capitolo ${state.currentChapter + 1}: ${state.discovered.size}/${currentCh.requiredDiscoveries} scoperte`,
+    rx + RIGHT_PANEL_W / 2, 52);
+
   // Score
   ctx.fillStyle = '#FFFFFF';
   ctx.font = '14px sans-serif';
-  ctx.fillText(`Punteggio: ${state.score}`, rx + RIGHT_PANEL_W / 2, 55);
+  ctx.fillText(`Punteggio: ${state.score}`, rx + RIGHT_PANEL_W / 2, 72);
 
   // Chapters
-  let cy = 90;
+  let cy = 100;
   for (let i = 0; i < CHAPTERS.length; i++) {
     const ch = CHAPTERS[i];
     const isActive = state.currentChapter === i;
@@ -1506,17 +1551,32 @@ function renderParticlesAndEffects(ctx: CanvasRenderingContext2D, state: GameSta
     }
   }
 
-  // Invalid animation
+  // Invalid animation - clearer message
   if (state.invalidAnim) {
     const ia = state.invalidAnim;
     const t = ia.timer / ia.maxTimer;
-    const alpha = 1 - t;
-    ctx.globalAlpha = alpha * 0.5;
+    const alpha = t < 0.1 ? t / 0.1 : t > 0.7 ? (1 - t) / 0.3 : 1;
+    ctx.globalAlpha = alpha * 0.9;
+
+    // Background panel for the message
+    const msgW = 350;
+    const msgH = 50;
+    const msgX = ia.x - msgW / 2;
+    const msgY = ia.y - 70 - t * 15;
+    ctx.fillStyle = 'rgba(80,20,20,0.85)';
+    ctx.fillRect(msgX, msgY, msgW, msgH);
+    ctx.strokeStyle = '#FF5252';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(msgX, msgY, msgW, msgH);
+
     ctx.fillStyle = '#FF5252';
-    ctx.font = 'bold 16px sans-serif';
+    ctx.font = 'bold 15px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('Nessuna reazione', ia.x, ia.y - 40 - t * 20);
+    ctx.fillText('Questa combinazione non funziona.', ia.x, msgY + 16);
+    ctx.fillStyle = '#FFAB91';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('Prova un\'altra!', ia.x, msgY + 36);
     ctx.globalAlpha = 1;
   }
 }
@@ -1608,6 +1668,204 @@ function renderChapterComplete(ctx: CanvasRenderingContext2D, state: GameState, 
   ctx.fillStyle = '#FFD700';
   ctx.font = '18px sans-serif';
   ctx.fillText(`Punteggio: ${state.score}`, W / 2, H - 100);
+}
+
+// ─── Tutorial Screen ──────────────────────────────────────────────
+
+function renderTutorial(ctx: CanvasRenderingContext2D, state: GameState, time: number): void {
+  ctx.fillStyle = 'rgba(18,8,30,0.95)';
+  ctx.fillRect(0, 0, W, H);
+
+  const step = state.tutorialStep;
+
+  // Title
+  ctx.fillStyle = '#FFD700';
+  ctx.font = 'bold 36px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = '#FFD700';
+  ctx.shadowBlur = 15;
+  ctx.fillText('Come si Gioca', W / 2, 80);
+  ctx.shadowBlur = 0;
+
+  // Step indicators
+  for (let i = 0; i < 3; i++) {
+    const dotX = W / 2 - 30 + i * 30;
+    ctx.fillStyle = i === step ? '#FFD700' : 'rgba(179,157,219,0.4)';
+    ctx.beginPath();
+    ctx.arc(dotX, 120, i === step ? 8 : 5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  if (step === 0) {
+    // Step 1: Basic instructions
+    ctx.fillStyle = '#B39DDB';
+    ctx.font = '22px Georgia, serif';
+    ctx.fillText('Trascina un elemento su un altro per combinarli', W / 2, 200);
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '18px Georgia, serif';
+    ctx.fillText('Scopri nuove sostanze combinando gli elementi', W / 2, 250);
+
+    // Show the 4 base elements
+    const baseIds = ['terra', 'acqua', 'fuoco', 'aria'];
+    const startX = W / 2 - 180;
+    for (let i = 0; i < 4; i++) {
+      const elem = getElement(baseIds[i]);
+      const ex = startX + i * 120;
+      const ey = 360;
+      const floatY = ey + Math.sin(time * 1.5 + i) * 5;
+      drawOrb(ctx, elem, ex, floatY, 35, time);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(elem.name, ex, floatY + 45);
+    }
+
+    ctx.fillStyle = 'rgba(179,157,219,0.6)';
+    ctx.font = '16px sans-serif';
+    ctx.fillText('Questi sono i 4 elementi base', W / 2, 450);
+
+  } else if (step === 1) {
+    // Step 2: Animated example - Terra + Acqua -> Fango
+    ctx.fillStyle = '#B39DDB';
+    ctx.font = '22px Georgia, serif';
+    ctx.fillText('Esempio: Combina Terra e Acqua', W / 2, 200);
+
+    const terra = getElement('terra');
+    const acqua = getElement('acqua');
+    const fango = getElement('fango');
+
+    const animT = (time * 0.5) % 3;
+
+    if (animT < 1.5) {
+      // Elements moving together
+      const p = Math.min(1, animT / 1.2);
+      const easeP = 1 - (1 - p) * (1 - p);
+      const terraX = W / 2 - 120 + easeP * 80;
+      const acquaX = W / 2 + 120 - easeP * 80;
+      const y = 350;
+      drawOrb(ctx, terra, terraX, y, 35 * (1 - easeP * 0.3), time);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('Terra', terraX, y + 45);
+      drawOrb(ctx, acqua, acquaX, y, 35 * (1 - easeP * 0.3), time);
+      ctx.fillText('Acqua', acquaX, y + 45);
+
+      // Plus sign
+      ctx.fillStyle = '#FFD700';
+      ctx.font = 'bold 28px sans-serif';
+      ctx.fillText('+', W / 2, y);
+    } else {
+      // Result appearing
+      const p = Math.min(1, (animT - 1.5) / 0.8);
+      const scale = 0.3 + p * 0.7;
+      ctx.globalAlpha = p;
+      drawOrb(ctx, fango, W / 2, 350, 40 * scale, time, true);
+      ctx.globalAlpha = 1;
+
+      // Arrow and name
+      ctx.fillStyle = '#FFD700';
+      ctx.font = 'bold 22px Georgia, serif';
+      ctx.fillText('\u2192 Fango!', W / 2, 420);
+    }
+
+    ctx.fillStyle = 'rgba(179,157,219,0.6)';
+    ctx.font = '16px sans-serif';
+    ctx.fillText('Terra + Acqua = Fango', W / 2, 480);
+
+  } else {
+    // Step 3: Final tips
+    ctx.fillStyle = '#B39DDB';
+    ctx.font = '22px Georgia, serif';
+    ctx.fillText('Consigli', W / 2, 200);
+
+    const tips = [
+      '\u2022 Seleziona un elemento dal pannello a sinistra',
+      '\u2022 Trascinalo nell\'area centrale e rilascialo',
+      '\u2022 Trascina un secondo elemento sopra il primo',
+      '\u2022 Se la combinazione funziona, nasce un nuovo elemento!',
+      '\u2022 Scopri tutti gli elementi per completare ogni capitolo',
+    ];
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '17px sans-serif';
+    let ty = 270;
+    for (const tip of tips) {
+      ctx.fillText(tip, W / 2, ty);
+      ty += 35;
+    }
+  }
+
+  // Continue prompt
+  const blink = 0.5 + Math.sin(time * 3) * 0.5;
+  ctx.globalAlpha = blink;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '18px Georgia, serif';
+  ctx.fillText(step < 2 ? 'Clicca per continuare' : 'Clicca per iniziare a giocare', W / 2, H - 60);
+  ctx.globalAlpha = 1;
+}
+
+// ─── Discovery Log ───────────────────────────────────────────────
+
+function renderDiscoveryLog(ctx: CanvasRenderingContext2D, state: GameState, time: number): void {
+  if (state.discoveryLog.length === 0) return;
+
+  const logX = COMBINE_AREA_X + 10;
+  const logY = H - 30;
+
+  ctx.save();
+  for (let i = 0; i < state.discoveryLog.length; i++) {
+    const entry = state.discoveryLog[i];
+    const alpha = Math.min(1, entry.timer / 2);
+    const y = logY - i * 22;
+    if (y < 50) break;
+
+    ctx.globalAlpha = alpha;
+
+    // Background
+    ctx.fillStyle = 'rgba(18,8,30,0.75)';
+    ctx.fillRect(logX, y - 8, 320, 20);
+    ctx.strokeStyle = 'rgba(255,215,0,0.3)';
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(logX, y - 8, 320, 20);
+
+    // Text
+    ctx.fillStyle = '#FFD700';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`Scoperto: ${entry.name} (${entry.recipe})`, logX + 6, y + 2);
+  }
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+
+// ─── Exit Button ─────────────────────────────────────────────────
+
+function renderExitButton(ctx: CanvasRenderingContext2D, state: GameState, time: number): void {
+  const bx = 5;
+  const by = 5;
+  const bw = 36;
+  const bh = 36;
+
+  // Check hover
+  const isHovered = state.mouseX >= bx && state.mouseX <= bx + bw &&
+    state.mouseY >= by && state.mouseY <= by + bh;
+
+  ctx.save();
+  ctx.fillStyle = isHovered ? 'rgba(255,50,50,0.7)' : 'rgba(255,50,50,0.3)';
+  ctx.fillRect(bx, by, bw, bh);
+  ctx.strokeStyle = isHovered ? '#FF5252' : 'rgba(255,50,50,0.5)';
+  ctx.lineWidth = isHovered ? 2 : 1;
+  ctx.strokeRect(bx, by, bw, bh);
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('X', bx + bw / 2, by + bh / 2);
+  ctx.restore();
 }
 
 // Hit test helpers

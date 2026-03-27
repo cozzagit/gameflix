@@ -3,7 +3,7 @@
 
 import {
   CANVAS_W, CANVAS_H, COLORS, GameScreen, SaveData, LevelDef,
-  Button, clamp,
+  Button, clamp, TutorialInfo,
 } from './types';
 import { LEVELS } from './levels';
 import {
@@ -11,7 +11,8 @@ import {
   drawMirror, drawNumberGrid, drawSubstitutionTable,
   drawMorseReference, drawAtbashTable, drawVigenereGrid,
   drawFrequencyChart, drawMultiStepProgress, drawHUD,
-  drawToolDescription, drawButton,
+  drawToolDescription, drawButton, drawTutorialPanel,
+  drawExitButton, drawInputLabel, drawCipherToolLabel,
 } from './renderer';
 import {
   drawScanlines, drawCRTCurvature, drawMorseDecoration,
@@ -64,6 +65,9 @@ export class Game {
   private wheelRotation: number = 0;
   private wheelDragging: boolean = false;
   private wheelDragStartAngle: number = 0;
+
+  // Tutorial state
+  private showTutorial: boolean = false;
 
   // UI state
   private buttons: Button[] = [];
@@ -251,7 +255,16 @@ export class Game {
         break;
       case 'levelSelect':
         this.screen = 'levelSelect';
+        this.showTutorial = false;
         this.buildButtons();
+        break;
+      case 'exit':
+        this.screen = 'levelSelect';
+        this.showTutorial = false;
+        this.buildButtons();
+        break;
+      case 'toggleTutorial':
+        this.showTutorial = !this.showTutorial;
         break;
       case 'restart':
         if (this.currentLevel) {
@@ -285,6 +298,11 @@ export class Game {
         break;
 
       case 'levelSelect':
+        // Exit button (X) top-left
+        this.buttons.push({
+          x: 10, y: 5, w: 32, h: 32,
+          label: 'X', action: 'back', hovered: false,
+        });
         this.buttons.push({
           x: 20, y: CANVAS_H - 50, w: 120, h: 36,
           label: '< INDIETRO', action: 'back', hovered: false,
@@ -292,13 +310,20 @@ export class Game {
         break;
 
       case 'playing':
+        // Exit button (X) top-left
         this.buttons.push({
-          x: CANVAS_W - 160, y: CANVAS_H - 55, w: 140, h: 36,
-          label: 'SUGGERIMENTO', action: 'hint', hovered: false,
+          x: 10, y: 5, w: 32, h: 32,
+          label: 'X', action: 'exit', hovered: false,
         });
+        // Hint button - more prominent
         this.buttons.push({
-          x: 20, y: CANVAS_H - 55, w: 120, h: 36,
-          label: '< INDIETRO', action: 'levelSelect', hovered: false,
+          x: CANVAS_W - 240, y: CANVAS_H - 55, w: 220, h: 40,
+          label: '\u{1F4A1} SUGGERIMENTO (Rivela una lettera)', action: 'hint', hovered: false,
+        });
+        // Tutorial toggle button
+        this.buttons.push({
+          x: 20, y: CANVAS_H - 55, w: 160, h: 36,
+          label: '? ISTRUZIONI', action: 'toggleTutorial', hovered: false,
         });
         break;
 
@@ -353,6 +378,8 @@ export class Game {
     }
 
     this.screen = 'playing';
+    // Show tutorial automatically on level 1
+    this.showTutorial = index === 0;
     this.buildButtons();
     playLevelStart();
   }
@@ -669,12 +696,105 @@ export class Game {
     ctx.restore();
   }
 
+  private getTutorialInfo(): TutorialInfo | null {
+    if (!this.currentLevel) return null;
+    const cipherType = this.currentLevel.steps && this.currentStep < this.currentLevel.steps.length
+      ? this.currentLevel.steps[this.currentStep].cipherType
+      : this.currentLevel.cipherType;
+
+    switch (cipherType) {
+      case 'caesar': {
+        const shift = this.currentLevel.cipherParam ?? 3;
+        return {
+          title: 'CIFRARIO DI CESARE',
+          lines: [
+            `Ogni lettera e\u0300 stata spostata di ${shift} posizioni nell'alfabeto.`,
+            'Per decifrare, sposta ogni lettera indietro dello stesso numero.',
+            'Decifra il messaggio e digita la risposta.',
+          ],
+          example: `A\u2192${String.fromCharCode(65 + (typeof shift === 'number' ? shift : 3))}, B\u2192${String.fromCharCode(66 + (typeof shift === 'number' ? shift : 3))}, C\u2192${String.fromCharCode(67 + (typeof shift === 'number' ? shift : 3))}...`,
+        };
+      }
+      case 'reverse':
+        return {
+          title: 'TESTO INVERTITO',
+          lines: [
+            'Il messaggio e\u0300 scritto al contrario.',
+            'Leggi le lettere da destra a sinistra per rivelarlo.',
+            'Decifra il messaggio e digita la risposta.',
+          ],
+          example: 'CIAO \u2192 OAIC',
+        };
+      case 'a1z26':
+        return {
+          title: 'CIFRARIO A1Z26',
+          lines: [
+            'Ogni lettera e\u0300 sostituita dal suo numero nell\'alfabeto.',
+            'A=1, B=2, C=3, ... Z=26.',
+            'Converti i numeri in lettere e digita la risposta.',
+          ],
+          example: '1=A, 2=B, 3=C ... 26=Z',
+        };
+      case 'keyword':
+        return {
+          title: 'CIFRARIO A SOSTITUZIONE',
+          lines: [
+            'L\'alfabeto cifrato inizia con una parola chiave,',
+            'poi continua con le lettere rimanenti.',
+            'Usa la tabella per decifrare ogni lettera.',
+          ],
+          example: `Chiave: ${this.currentLevel.cipherParam}`,
+        };
+      case 'morse':
+        return {
+          title: 'CODICE MORSE',
+          lines: [
+            'Ogni lettera e\u0300 codificata con punti e linee.',
+            'Usa la tabella di riferimento per decodificare.',
+            'Digita la parola corrispondente.',
+          ],
+          example: '.- = A, -... = B, -.-. = C',
+        };
+      case 'atbash':
+        return {
+          title: 'CIFRARIO ATBASH',
+          lines: [
+            'L\'alfabeto viene invertito: A\u2194Z, B\u2194Y, C\u2194X...',
+            'Ogni lettera viene sostituita col suo speculare.',
+            'Usa la tabella per decifrare.',
+          ],
+          example: 'A\u2194Z, B\u2194Y, C\u2194X, D\u2194W...',
+        };
+      case 'vigenere':
+        return {
+          title: 'CIFRARIO DI VIGENERE',
+          lines: [
+            'Una chiave ciclica sposta ogni lettera di un valore diverso.',
+            'Incrocia la riga della chiave con la colonna del testo cifrato.',
+            'La chiave si ripete per tutta la lunghezza del messaggio.',
+          ],
+          example: `Chiave: ${this.currentLevel.cipherParam}`,
+        };
+      case 'multi':
+        return {
+          title: 'CIFRATURA MULTIPLA',
+          lines: [
+            'Il messaggio e\u0300 cifrato con piu\u0300 metodi in sequenza.',
+            'Decifra un passaggio alla volta nell\'ordine indicato.',
+            'Completa tutti i passaggi per rivelare il messaggio.',
+          ],
+        };
+      default:
+        return null;
+    }
+  }
+
   private renderPlaying(ctx: CanvasRenderingContext2D, dt: number): void {
     if (!this.currentLevel) return;
     const level = this.currentLevel;
 
-    // HUD
-    drawHUD(ctx, level.id, level.title, this.levelScore, this.levelTime, this.hintsUsed);
+    // HUD with level indicator
+    drawHUD(ctx, level.id, level.title, this.levelScore, this.levelTime, this.hintsUsed, LEVELS.length);
 
     // Tool description
     drawToolDescription(ctx, level.toolDescription);
@@ -683,14 +803,17 @@ export class Game {
     const encrypted = this.getCurrentEncrypted();
     drawEncryptedMessage(ctx, encrypted, this.time);
 
-    // Cipher-specific tool visualization
+    // Cipher-specific tool visualization with label
     this.renderCipherTool(ctx, level, dt);
+
+    // Input label
+    drawInputLabel(ctx);
 
     // Typewriter input
     const answer = this.getCurrentAnswer();
     drawTypewriterInput(ctx, this.playerInput, answer, this.cursorBlink, this.time);
 
-    // Buttons (hint, back)
+    // Buttons (exit, hint, tutorial)
     for (const btn of this.buttons) {
       drawButton(ctx, btn);
     }
@@ -711,6 +834,14 @@ export class Game {
     if (['caesar', 'keyword', 'atbash', 'vigenere'].includes(level.cipherType)) {
       drawFrequencyChart(ctx, 850, 520, encrypted);
     }
+
+    // Tutorial overlay (on top of everything)
+    if (this.showTutorial) {
+      const tutorial = this.getTutorialInfo();
+      if (tutorial) {
+        drawTutorialPanel(ctx, tutorial, this.time);
+      }
+    }
   }
 
   private renderCipherTool(ctx: CanvasRenderingContext2D, level: LevelDef, dt: number): void {
@@ -725,6 +856,7 @@ export class Game {
     switch (currentCipherType) {
       case 'caesar': {
         const shift = typeof currentParam === 'number' ? currentParam : 3;
+        drawCipherToolLabel(ctx, 300, 280, `RUOTA DI CESARE (Spostamento: ${shift})`);
         drawCaesarWheel(ctx, 300, 420, shift, undefined, Math.sin(this.time * 0.5) * 0.3);
         // Also draw a second wheel for ROT7
         if (shift >= 5) {
@@ -734,31 +866,37 @@ export class Game {
       }
 
       case 'reverse':
+        drawCipherToolLabel(ctx, CANVAS_W / 2, 280, 'SPECCHIO — Leggi al contrario');
         drawMirror(ctx, CANVAS_W / 2, 380, this.getCurrentEncrypted(), this.time);
         break;
 
       case 'a1z26': {
         const nums = this.getCurrentEncrypted().split('-').map((n) => parseInt(n, 10)).filter((n) => !isNaN(n));
+        drawCipherToolLabel(ctx, 400, 262, 'TABELLA NUMERI-LETTERE — Ogni numero = una lettera');
         drawNumberGrid(ctx, 180, 280, nums);
         break;
       }
 
       case 'keyword': {
         const keyword = typeof currentParam === 'string' ? currentParam : 'ROMA';
+        drawCipherToolLabel(ctx, 400, 282, `TABELLA DI SOSTITUZIONE — Chiave: ${keyword}`);
         drawSubstitutionTable(ctx, 100, 300, keyword);
         break;
       }
 
       case 'morse':
+        drawCipherToolLabel(ctx, 400, 262, 'TABELLA CODICE MORSE — Punti e linee');
         drawMorseReference(ctx, 120, 280);
         break;
 
       case 'atbash':
+        drawCipherToolLabel(ctx, 400, 282, 'TABELLA ATBASH — Alfabeto inverso');
         drawAtbashTable(ctx, 100, 300);
         break;
 
       case 'vigenere': {
         const key = typeof currentParam === 'string' ? currentParam : 'LUX';
+        drawCipherToolLabel(ctx, 300, 262, `GRIGLIA DI VIGENERE — Chiave: ${key}`);
         drawVigenereGrid(ctx, 100, 280, key);
         break;
       }

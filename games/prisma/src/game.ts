@@ -10,6 +10,16 @@ import { drawTitleScreen, getTitleButton, drawLevelSelect, getLevelSelectButton 
 
 const STORAGE_KEY = 'prisma_progress';
 
+/** Tutorial messages shown on level 1 */
+const TUTORIAL_MESSAGES = [
+  'Clicca sulla barra degli strumenti per selezionare un pezzo',
+  'Clicca su una cella vuota per posizionarlo',
+  'Clicca su un pezzo posizionato per ruotarlo',
+  'Guida la luce verso i bersagli colorati',
+];
+const TUTORIAL_DURATION = 4.0; // seconds per message
+const TUTORIAL_FADE = 0.8; // fade in/out duration
+
 export class Game {
   private canvas: HTMLCanvasElement;
   private renderer: Renderer;
@@ -20,6 +30,8 @@ export class Game {
   private animTime: number = 0;
   private levelCompleteDelay: number = 0;
   private prevActivated: Set<string> = new Set();
+  private tutorialTime: number = 0;
+  private tutorialDismissed: boolean = false;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -106,6 +118,18 @@ export class Game {
       case Screen.PLAYING: {
         if (!this.state) break;
 
+        // Check exit button click (top-left)
+        if (sx >= 10 && sx <= 50 && sy >= 4 && sy <= 32) {
+          playClick();
+          this.screen = Screen.LEVEL_SELECT;
+          break;
+        }
+
+        // Dismiss tutorial on any click (still process the click)
+        if (this.state.currentLevel === 1 && !this.tutorialDismissed) {
+          this.tutorialDismissed = true;
+        }
+
         // Check toolbar click
         const slot = this.renderer.getToolbarSlot(sx, sy, this.state.availablePieces);
         if (slot >= 0) {
@@ -128,6 +152,14 @@ export class Game {
 
       case Screen.LEVEL_COMPLETE: {
         if (!this.state) break;
+
+        // Check exit button
+        if (sx >= 10 && sx <= 50 && sy >= 4 && sy <= 32) {
+          playClick();
+          this.screen = Screen.LEVEL_SELECT;
+          break;
+        }
+
         const buttons = this.renderer.getLevelCompleteButtons(this.state.currentLevel);
 
         if (this.renderer.isInsideButton(sx, sy, ...buttons.retry)) {
@@ -255,6 +287,8 @@ export class Game {
     };
 
     this.prevActivated = new Set();
+    this.tutorialTime = 0;
+    this.tutorialDismissed = false;
     clearParticles();
     this.renderer.computeLayout(gridCols, gridRows);
     this.screen = Screen.PLAYING;
@@ -345,6 +379,11 @@ export class Game {
     if (this.state && this.screen === Screen.PLAYING) {
       this.state.elapsedTime = (performance.now() - this.state.startTime) / 1000;
 
+      // Update tutorial time for level 1
+      if (this.state.currentLevel === 1 && !this.tutorialDismissed) {
+        this.tutorialTime += dt;
+      }
+
       // Spawn particles on beam endpoints
       if (Math.random() < 0.3) {
         for (const seg of this.state.beamSegments) {
@@ -402,6 +441,17 @@ export class Game {
           this.state.elapsedTime,
           this.state.stars,
         );
+        this.renderer.drawExitButton();
+
+        // Tutorial overlay for level 1
+        if (this.state.currentLevel === 1 && !this.tutorialDismissed) {
+          this.renderer.drawTutorialOverlay(
+            TUTORIAL_MESSAGES,
+            this.tutorialTime,
+            TUTORIAL_DURATION,
+            TUTORIAL_FADE,
+          );
+        }
         break;
       }
 

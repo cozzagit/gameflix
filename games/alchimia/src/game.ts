@@ -1,4 +1,4 @@
-import { GameState, PlacedElement } from './types';
+import { GameState, PlacedElement, DiscoveryLogEntry } from './types';
 import { ELEMENTS, BASE_ELEMENTS, getElement, getElementCount } from './elements';
 import { findRecipe } from './recipes';
 import {
@@ -35,6 +35,7 @@ interface SaveData {
   discovered: string[];
   score: number;
   chapterCompleted: boolean[];
+  tutorialPlayed?: boolean;
 }
 
 function loadSave(): SaveData | null {
@@ -54,6 +55,7 @@ function saveToDisk(state: GameState): void {
     discovered: Array.from(state.discovered),
     score: state.score,
     chapterCompleted: state.chapterCompleted,
+    tutorialPlayed: state.showTutorialHasPlayed,
   };
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -104,6 +106,10 @@ export function createGame(canvas: HTMLCanvasElement): void {
     hoveredElement: null,
     hoveredWorkspace: null,
     celebrationTimer: 0,
+    discoveryLog: [],
+    tutorialStep: 0,
+    tutorialTimer: 0,
+    showTutorialHasPlayed: false,
   };
 
   // Load save
@@ -115,6 +121,7 @@ export function createGame(canvas: HTMLCanvasElement): void {
     state.score = save.score || 0;
     if (save.chapterCompleted) state.chapterCompleted = save.chapterCompleted;
     state.currentChapter = getChapterForDiscoveryCount(state.discovered.size);
+    state.showTutorialHasPlayed = save.tutorialPlayed || false;
   }
 
   // Init sparkles
@@ -146,9 +153,27 @@ export function createGame(canvas: HTMLCanvasElement): void {
     state.mouseDown = true;
 
     if (state.screen === 'title') {
-      state.screen = 'play';
+      if (!state.showTutorialHasPlayed) {
+        state.screen = 'tutorial';
+        state.tutorialStep = 0;
+        state.tutorialTimer = 0;
+      } else {
+        state.screen = 'play';
+      }
       playClick();
       showHint(state, 'Seleziona un elemento dal pannello a sinistra');
+      return;
+    }
+
+    if (state.screen === 'tutorial') {
+      state.tutorialStep++;
+      playClick();
+      if (state.tutorialStep >= 3) {
+        state.screen = 'play';
+        state.showTutorialHasPlayed = true;
+        saveToDisk(state);
+        showHint(state, 'Seleziona un elemento dal pannello a sinistra');
+      }
       return;
     }
 
@@ -157,6 +182,15 @@ export function createGame(canvas: HTMLCanvasElement): void {
         state.screen = 'play';
         playClick();
       }
+      return;
+    }
+
+    // Check exit button click (top-left corner, 36x36)
+    if (x >= 5 && x <= 41 && y >= 5 && y <= 41) {
+      state.screen = 'title';
+      state.titleAlpha = 1;
+      state.placedElements = [];
+      playClick();
       return;
     }
 
@@ -332,6 +366,12 @@ export function createGame(canvas: HTMLCanvasElement): void {
         const depth = ELEMENTS[result]?.depth ?? 1;
         state.score += depth * 100;
 
+        // Add to discovery log
+        const elemAName = ELEMENTS[elemA]?.name ?? elemA;
+        const elemBName = ELEMENTS[elemB]?.name ?? elemB;
+        const resultName = ELEMENTS[result]?.name ?? result;
+        addDiscoveryLog(state, resultName, `${elemAName} + ${elemBName}`);
+
         // Schedule discovery effects (after merge anim at 0.5)
         setTimeout(() => {
           playDiscoveryChime();
@@ -373,8 +413,9 @@ export function createGame(canvas: HTMLCanvasElement): void {
         x: (state.mouseX + atX) / 2,
         y: (state.mouseY + atY) / 2,
         timer: 0,
-        maxTimer: 1.0,
+        maxTimer: 1.5,
       };
+      showHint(state, 'Questa combinazione non funziona. Prova un\'altra!');
     }
   }
 
@@ -416,6 +457,12 @@ export function createGame(canvas: HTMLCanvasElement): void {
         const depth = ELEMENTS[result]?.depth ?? 1;
         state.score += depth * 100;
 
+        // Add to discovery log
+        const elemAName = ELEMENTS[a.id]?.name ?? a.id;
+        const elemBName = ELEMENTS[b.id]?.name ?? b.id;
+        const resultName = ELEMENTS[result]?.name ?? result;
+        addDiscoveryLog(state, resultName, `${elemAName} + ${elemBName}`);
+
         setTimeout(() => {
           playDiscoveryChime();
           state.discoveryAnim = {
@@ -449,8 +496,9 @@ export function createGame(canvas: HTMLCanvasElement): void {
         x: midX,
         y: midY,
         timer: 0,
-        maxTimer: 1.0,
+        maxTimer: 1.5,
       };
+      showHint(state, 'Questa combinazione non funziona. Prova un\'altra!');
       // Bounce apart
       a.vx = (a.x - midX) * 3;
       a.vy = (a.y - midY) * 3;
@@ -484,6 +532,14 @@ export function createGame(canvas: HTMLCanvasElement): void {
     state.hintTimer = 3;
   }
 
+  function addDiscoveryLog(state: GameState, name: string, recipe: string): void {
+    state.discoveryLog.unshift({ name, recipe, timer: 10 });
+    // Keep max 8 entries
+    if (state.discoveryLog.length > 8) {
+      state.discoveryLog = state.discoveryLog.slice(0, 8);
+    }
+  }
+
   // Game loop
   let lastTime = performance.now();
 
@@ -493,6 +549,17 @@ export function createGame(canvas: HTMLCanvasElement): void {
       state.titleAlpha += TITLE_FADE_SPEED * dt;
       state.titlePhase += dt;
     }
+
+    // Tutorial timer
+    if (state.screen === 'tutorial') {
+      state.tutorialTimer += dt;
+    }
+
+    // Discovery log timers
+    for (const entry of state.discoveryLog) {
+      entry.timer -= dt;
+    }
+    state.discoveryLog = state.discoveryLog.filter(e => e.timer > 0);
 
     // Sparkles
     state.sparkles = updateSparkles(state.sparkles, dt, W, H);

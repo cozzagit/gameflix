@@ -309,7 +309,7 @@ export class Renderer {
     ctx.fillStyle = COLORS.gold;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`Livello ${levelNum}`, panelX + PANEL_WIDTH / 2, 35);
+    ctx.fillText(`Livello ${levelNum}/12`, panelX + PANEL_WIDTH / 2, 35);
     ctx.restore();
 
     // Decorative line

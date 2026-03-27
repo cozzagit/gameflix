@@ -1,7 +1,7 @@
 // ─── Renderer ─────────────────────────────────────────────────────
 // All drawing routines for Codice: CRT screen, cipher tools, typewriter input
 
-import { CANVAS_W, CANVAS_H, COLORS, FONTS, ALPHABET, LevelDef, Button } from './types';
+import { CANVAS_W, CANVAS_H, COLORS, FONTS, ALPHABET, LevelDef, Button, TutorialInfo } from './types';
 import { buildKeywordAlphabet, getMorseMap, frequencyAnalysis } from './ciphers';
 import { drawPhosphorGlow, drawScreenGlow } from './effects';
 
@@ -158,7 +158,25 @@ export function drawTypewriterInput(
   const panelW = CANVAS_W - 400;
   const panelH = 60;
 
-  drawPanel(ctx, panelX, panelY, panelW, panelH, 'INSERISCI RISPOSTA');
+  // Highlighted input area with brighter border
+  ctx.save();
+  ctx.fillStyle = 'rgba(0,20,0,0.9)';
+  ctx.fillRect(panelX, panelY, panelW, panelH);
+  ctx.strokeStyle = COLORS.green;
+  ctx.lineWidth = 2;
+  ctx.shadowColor = COLORS.greenGlow;
+  ctx.shadowBlur = 8;
+  ctx.strokeRect(panelX, panelY, panelW, panelH);
+  ctx.shadowBlur = 0;
+  // Corner accents
+  const cs = 8;
+  ctx.strokeStyle = COLORS.amber;
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(panelX, panelY + cs); ctx.lineTo(panelX, panelY); ctx.lineTo(panelX + cs, panelY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(panelX + panelW - cs, panelY); ctx.lineTo(panelX + panelW, panelY); ctx.lineTo(panelX + panelW, panelY + cs); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(panelX, panelY + panelH - cs); ctx.lineTo(panelX, panelY + panelH); ctx.lineTo(panelX + cs, panelY + panelH); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(panelX + panelW - cs, panelY + panelH); ctx.lineTo(panelX + panelW, panelY + panelH); ctx.lineTo(panelX + panelW, panelY + panelH - cs); ctx.stroke();
+  ctx.restore();
 
   ctx.save();
   const fontSize = 30;
@@ -175,7 +193,7 @@ export function drawTypewriterInput(
     const slotX = startX + i * charWidth;
 
     // Underline for each slot
-    ctx.strokeStyle = COLORS.greenDark;
+    ctx.strokeStyle = i < input.length ? (input[i].toUpperCase() === answer[i].toUpperCase() ? COLORS.green : COLORS.red) : COLORS.greenDark;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(slotX, textY + 18);
@@ -187,19 +205,23 @@ export function drawTypewriterInput(
       const isCorrect = ch === answer[i].toUpperCase();
       ctx.fillStyle = isCorrect ? COLORS.green : COLORS.red;
       ctx.shadowColor = isCorrect ? COLORS.greenGlow : COLORS.red;
-      ctx.shadowBlur = isCorrect ? 10 : 4;
+      ctx.shadowBlur = isCorrect ? 12 : 6;
       ctx.textAlign = 'center';
       ctx.fillText(ch, slotX + charWidth / 2 - 2, textY);
       ctx.shadowBlur = 0;
     }
   }
 
-  // Cursor
-  if (cursorBlink && input.length < totalChars) {
+  // Blinking cursor (more prominent)
+  if (input.length < totalChars) {
     const cursorX = startX + input.length * charWidth;
-    ctx.fillStyle = COLORS.green;
-    ctx.globalAlpha = 0.7 + Math.sin(time * 6) * 0.3;
-    ctx.fillRect(cursorX, textY - 14, 3, 28);
+    const cursorAlpha = 0.5 + Math.sin(time * 8) * 0.5;
+    ctx.fillStyle = COLORS.amber;
+    ctx.globalAlpha = cursorAlpha;
+    ctx.shadowColor = COLORS.amber;
+    ctx.shadowBlur = 6;
+    ctx.fillRect(cursorX, textY - 16, 3, 32);
+    ctx.shadowBlur = 0;
     ctx.globalAlpha = 1;
   }
 
@@ -684,6 +706,44 @@ export function drawButton(ctx: CanvasRenderingContext2D, btn: Button): void {
   ctx.save();
   const isHovered = btn.hovered;
 
+  // Special rendering for exit button
+  if (btn.action === 'exit') {
+    ctx.fillStyle = isHovered ? 'rgba(170,21,21,0.7)' : 'rgba(170,21,21,0.3)';
+    ctx.fillRect(btn.x, btn.y, btn.w, btn.h);
+    ctx.strokeStyle = isHovered ? COLORS.red : COLORS.redDim;
+    ctx.lineWidth = isHovered ? 2 : 1;
+    ctx.strokeRect(btn.x, btn.y, btn.w, btn.h);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = `bold 18px ${FONTS.mono}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('X', btn.x + btn.w / 2, btn.y + btn.h / 2);
+    ctx.restore();
+    return;
+  }
+
+  // Special rendering for hint button (more prominent)
+  if (btn.action === 'hint') {
+    ctx.fillStyle = isHovered ? 'rgba(255,176,0,0.3)' : 'rgba(255,176,0,0.1)';
+    ctx.fillRect(btn.x, btn.y, btn.w, btn.h);
+    ctx.strokeStyle = isHovered ? COLORS.amber : COLORS.amberDim;
+    ctx.lineWidth = isHovered ? 2 : 1.5;
+    ctx.strokeRect(btn.x, btn.y, btn.w, btn.h);
+    if (isHovered) {
+      ctx.shadowColor = COLORS.amber;
+      ctx.shadowBlur = 10;
+      ctx.strokeRect(btn.x, btn.y, btn.w, btn.h);
+      ctx.shadowBlur = 0;
+    }
+    ctx.fillStyle = isHovered ? COLORS.amber : COLORS.amberDim;
+    ctx.font = `bold 13px ${FONTS.mono}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(btn.label, btn.x + btn.w / 2, btn.y + btn.h / 2);
+    ctx.restore();
+    return;
+  }
+
   // Background
   ctx.fillStyle = isHovered ? COLORS.greenDark : COLORS.panelBg;
   ctx.fillRect(btn.x, btn.y, btn.w, btn.h);
@@ -733,7 +793,8 @@ export function drawHUD(
   levelTitle: string,
   score: number,
   timeElapsed: number,
-  hintsUsed: number
+  hintsUsed: number,
+  totalLevels: number = 10
 ): void {
   ctx.save();
 
@@ -747,12 +808,21 @@ export function drawHUD(
   ctx.lineTo(CANVAS_W, 40);
   ctx.stroke();
 
-  // Level info
+  // Level info (offset for exit button)
   ctx.font = `bold 14px ${FONTS.mono}`;
   ctx.fillStyle = COLORS.green;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
-  ctx.fillText(`LIVELLO ${levelNum}: ${levelTitle}`, 20, 20);
+  ctx.fillText(`LIVELLO ${levelNum}/${totalLevels}: ${levelTitle}`, 55, 20);
+
+  // Level indicator badge
+  ctx.fillStyle = COLORS.amber;
+  ctx.font = `bold 12px ${FONTS.mono}`;
+  ctx.textAlign = 'center';
+  ctx.shadowColor = COLORS.amber;
+  ctx.shadowBlur = 6;
+  ctx.fillText(`${levelNum}/${totalLevels}`, CANVAS_W / 2, 55);
+  ctx.shadowBlur = 0;
 
   // Timer
   const minutes = Math.floor(timeElapsed / 60);
@@ -764,6 +834,7 @@ export function drawHUD(
 
   // Score
   ctx.fillStyle = COLORS.amber;
+  ctx.font = `bold 14px ${FONTS.mono}`;
   ctx.textAlign = 'right';
   ctx.fillText(`PUNTI: ${score}`, CANVAS_W - 20, 20);
 
@@ -786,5 +857,112 @@ export function drawToolDescription(ctx: CanvasRenderingContext2D, text: string)
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(text, CANVAS_W / 2, 80);
+  ctx.restore();
+}
+
+// ─── Tutorial Panel ──────────────────────────────────────────────
+
+export function drawTutorialPanel(ctx: CanvasRenderingContext2D, tutorial: TutorialInfo, time: number): void {
+  ctx.save();
+
+  // Dim background
+  ctx.fillStyle = 'rgba(0,10,0,0.85)';
+  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+  // Panel
+  const panelW = 600;
+  const panelH = 320;
+  const panelX = (CANVAS_W - panelW) / 2;
+  const panelY = (CANVAS_H - panelH) / 2;
+
+  drawPanel(ctx, panelX, panelY, panelW, panelH, 'ISTRUZIONI');
+
+  // Title
+  ctx.font = `bold 22px ${FONTS.mono}`;
+  ctx.fillStyle = COLORS.amber;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = COLORS.amber;
+  ctx.shadowBlur = 10;
+  ctx.fillText(tutorial.title, CANVAS_W / 2, panelY + 40);
+  ctx.shadowBlur = 0;
+
+  // Description lines
+  ctx.font = `14px ${FONTS.mono}`;
+  ctx.fillStyle = COLORS.green;
+  let lineY = panelY + 80;
+  for (const line of tutorial.lines) {
+    ctx.fillText(line, CANVAS_W / 2, lineY);
+    lineY += 26;
+  }
+
+  // Example
+  if (tutorial.example) {
+    lineY += 10;
+    ctx.font = `bold 18px ${FONTS.mono}`;
+    ctx.fillStyle = COLORS.amber;
+    ctx.shadowColor = COLORS.amber;
+    ctx.shadowBlur = 6;
+    ctx.fillText(tutorial.example, CANVAS_W / 2, lineY);
+    ctx.shadowBlur = 0;
+  }
+
+  // Dismiss prompt
+  const blinkAlpha = 0.5 + Math.sin(time * 3) * 0.5;
+  ctx.globalAlpha = blinkAlpha;
+  ctx.font = `12px ${FONTS.mono}`;
+  ctx.fillStyle = COLORS.greenDim;
+  ctx.fillText('Clicca "? ISTRUZIONI" per chiudere', CANVAS_W / 2, panelY + panelH - 25);
+  ctx.globalAlpha = 1;
+
+  ctx.restore();
+}
+
+// ─── Exit Button ─────────────────────────────────────────────────
+
+export function drawExitButton(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, hovered: boolean): void {
+  ctx.save();
+  ctx.fillStyle = hovered ? COLORS.red : 'rgba(170,21,21,0.5)';
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = hovered ? COLORS.red : COLORS.redDim;
+  ctx.lineWidth = hovered ? 2 : 1;
+  ctx.strokeRect(x, y, w, h);
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = `bold 18px ${FONTS.mono}`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('X', x + w / 2, y + h / 2);
+  ctx.restore();
+}
+
+// ─── Input Label ─────────────────────────────────────────────────
+
+export function drawInputLabel(ctx: CanvasRenderingContext2D): void {
+  ctx.save();
+  const panelY = CANVAS_H - 130;
+  ctx.font = `bold 12px ${FONTS.mono}`;
+  ctx.fillStyle = COLORS.amber;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.shadowColor = COLORS.amber;
+  ctx.shadowBlur = 4;
+  ctx.fillText('DIGITA QUI LA RISPOSTA:', CANVAS_W / 2, panelY - 6);
+  ctx.shadowBlur = 0;
+  ctx.restore();
+}
+
+// ─── Cipher Tool Label ──────────────────────────────────────────
+
+export function drawCipherToolLabel(ctx: CanvasRenderingContext2D, x: number, y: number, text: string): void {
+  ctx.save();
+  ctx.font = `bold 11px ${FONTS.mono}`;
+  ctx.fillStyle = COLORS.amber;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.shadowColor = COLORS.amber;
+  ctx.shadowBlur = 4;
+  ctx.fillText(text, x, y);
+  ctx.shadowBlur = 0;
   ctx.restore();
 }

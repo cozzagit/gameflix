@@ -54,7 +54,7 @@ export interface Chapter {
   requiredDiscoveries: number;
 }
 
-export type GameScreen = 'title' | 'play' | 'chapter-complete';
+export type GameScreen = 'title' | 'tutorial' | 'play' | 'chapter-complete';
 
 export interface GameState {
   screen: GameScreen;
@@ -81,6 +81,16 @@ export interface GameState {
   hoveredElement: string | null;
   hoveredWorkspace: string | null;
   celebrationTimer: number;
+  discoveryLog: DiscoveryLogEntry[];
+  tutorialStep: number;
+  tutorialTimer: number;
+  showTutorialHasPlayed: boolean;
+}
+
+export interface DiscoveryLogEntry {
+  name: string;
+  recipe: string;
+  timer: number;
 }
 
 export interface DiscoveryAnim {
