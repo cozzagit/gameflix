@@ -12,6 +12,11 @@ export const COLORS = {
   mysteryText: '#E8D5B7',
   accentViolet: '#7C3AED',
   accentCrimson: '#E63946',
+  connectionGreen: '#22C55E',
+  connectionWrong: '#EF4444',
+  boardBg: '#1A1820',
+  cardBg: '#2A2838',
+  cardBorder: '#4A4868',
 } as const;
 
 export const FLASHLIGHT = {
@@ -39,13 +44,29 @@ export interface Clue {
   found: boolean;
 }
 
+export interface Connection {
+  clueA: string;
+  clueB: string;
+}
+
+export interface DeductionOption {
+  text: string;
+  correct: boolean;
+  explanation: string;
+}
+
 export interface SceneData {
   id: number;
   title: string;
   subtitle: string;
+  storyIntro: string;
   mystery: string;
   solution: string;
   clues: Clue[];
+  requiredConnections: Connection[];
+  deductionQuestion: string;
+  deductionOptions: DeductionOption[];
+  solutionNarrative: string;
   draw: (ctx: CanvasRenderingContext2D, time: number) => void;
 }
 
@@ -60,6 +81,14 @@ export interface Particle {
   color: string;
   alpha: number;
 }
+
+export type PlayingPhase =
+  | 'intro'
+  | 'explore'
+  | 'clue-popup'
+  | 'connect'
+  | 'deduce'
+  | 'solved';
 
 export type GameState =
   | 'title'

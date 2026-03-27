@@ -391,9 +391,22 @@ export function createScene6(): SceneData {
     id: 6,
     title: 'La Cappella',
     subtitle: 'Capitolo VI',
+    storyIntro: 'Una cappella abbandonata da decenni mostra segni di visite recenti. Qualcuno viene qui di nascosto. Scopri chi e perch\u00E9.',
     mystery: 'Chi frequenta ancora la cappella abbandonata?',
     solution: 'La candela fresca, i fiori, il nome, la porta nascosta e la corda tagliata rivelano che qualcuno usa ancora questo luogo in segreto.',
     clues: makeClues(),
+    requiredConnections: [
+      { clueA: 'fresh-candle', clueB: 'fresh-flowers' },
+      { clueA: 'pew-name', clueB: 'hidden-door' },
+    ],
+    deductionQuestion: 'Chi frequenta la cappella di nascosto?',
+    deductionOptions: [
+      { text: 'Vandali', correct: false, explanation: 'I fiori freschi e la candela indicano cura, non vandalismo.' },
+      { text: 'La vedova del conte Moretti', correct: true, explanation: 'Il nome inciso sul banco, i fiori freschi e la porta segreta indicano che la vedova visita la cappella per commemorare il marito.' },
+      { text: 'Un prete in pensione', correct: false, explanation: 'La corda della campana tagliata e la porta segreta suggeriscono che il visitatore non vuole essere scoperto.' },
+      { text: 'Nessuno, sono segni vecchi', correct: false, explanation: 'La candela appena bruciata e i fiori freschi dimostrano visite recentissime.' },
+    ],
+    solutionNarrative: 'La vedova del conte Moretti visita segretamente la cappella per commemorare il marito. Ha inciso il suo nome sul banco, porta fiori freschi e accende candele. Usa una porta nascosta dietro l\'arazzo per entrare senza essere vista, e ha tagliato la corda della campana per non fare rumore.',
     draw,
   };
 }

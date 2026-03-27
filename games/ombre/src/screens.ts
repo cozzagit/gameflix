@@ -102,8 +102,8 @@ export function getTitlePlayButton(): { x: number; y: number; w: number; h: numb
 // ─── Level Select Screen ────────────────────────────────────────────
 
 const levelNames = [
-  'La Scrivania', 'La Biblioteca', 'Il Giardino', 'Il Treno',
-  "L'Atelier", 'La Cappella', 'Il Porto', 'La Camera Sigillata',
+  'La Scrivania del Detective', 'La Biblioteca Segreta', 'Il Giardino', 'Il Treno delle 21:30',
+  "L'Atelier dell'Artista", 'La Cappella', 'Il Porto', 'La Camera Sigillata',
 ];
 
 export function drawLevelSelect(

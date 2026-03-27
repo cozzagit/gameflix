@@ -1,15 +1,45 @@
-// ─── Level 4: Il Treno (The Train) ──────────────────────────────────
+// ─── Level 3: Il Treno delle 21:30 ──────────────────────────────────
 
 import { type SceneData, type Clue } from '../types';
 import { drawWoodGrain, drawWindow, roundRect } from '../renderer';
 
 function makeClues(): Clue[] {
   return [
-    { id: 'lipstick', x: 850, y: 230, radius: 22, name: 'Traccia di rossetto', description: 'Un segno di rossetto sul vetro del finestrino', found: false },
-    { id: 'ticket', x: 400, y: 510, radius: 22, name: 'Biglietto', description: 'Un tagliando caduto tra i cuscini del sedile', found: false },
-    { id: 'handkerchief', x: 700, y: 160, radius: 22, name: 'Fazzoletto monogrammato', description: 'Un fazzoletto con le iniziali sulla cappelliera', found: false },
-    { id: 'vial', x: 1050, y: 380, radius: 22, name: 'Fiala misteriosa', description: 'Una piccola fiala di liquido nella tasca del cappotto', found: false },
-    { id: 'coded-message', x: 550, y: 250, radius: 22, name: 'Messaggio in codice', description: 'Un messaggio cifrato inciso nella cornice dello specchio', found: false },
+    {
+      id: 'bicchiere',
+      x: 400, y: 420, radius: 22,
+      name: 'Bicchiere',
+      description: 'Un bicchiere con residui biancastri sul fondo. Non \u00E8 zucchero.',
+      found: false,
+    },
+    {
+      id: 'biglietto-visita',
+      x: 600, y: 350, radius: 22,
+      name: 'Biglietto da visita',
+      description: 'Dr. Fabbri, cardiologo. Il biglietto ha un numero di cellulare sul retro.',
+      found: false,
+    },
+    {
+      id: 'fazzoletto',
+      x: 300, y: 380, radius: 22,
+      name: 'Fazzoletto',
+      description: "Un fazzoletto di seta con le iniziali 'V.M.' e un profumo forte di donna.",
+      found: false,
+    },
+    {
+      id: 'ricevuta',
+      x: 750, y: 450, radius: 22,
+      name: 'Ricevuta',
+      description: 'Ricevuta della farmacia: sonnifero acquistato oggi alle 18:00.',
+      found: false,
+    },
+    {
+      id: 'foto',
+      x: 500, y: 300, radius: 25,
+      name: 'Foto',
+      description: "Foto della vittima con una donna elegante. Sul retro: 'Per sempre tuo \u2014 V.'",
+      found: false,
+    },
   ];
 }
 
@@ -22,7 +52,7 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
   ctx.fillStyle = wallGrad;
   ctx.fillRect(0, 0, 1200, 800);
 
-  // Ornate wallpaper pattern
+  // Ornate wallpaper
   ctx.fillStyle = 'rgba(80,60,40,0.1)';
   for (let py = 10; py < 800; py += 40) {
     for (let px = 10; px < 1200; px += 40) {
@@ -41,7 +71,6 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
   ctx.fillRect(0, 0, 1200, 30);
   ctx.fillStyle = '#5A4A38';
   ctx.fillRect(0, 25, 1200, 8);
-  // Decorative molding pattern
   ctx.fillStyle = '#6A5A48';
   for (let mx = 0; mx < 1200; mx += 30) {
     ctx.beginPath();
@@ -49,61 +78,42 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
     ctx.fill();
   }
 
-  // ── Floor ──
+  // ── Floor + carpet ──
   ctx.fillStyle = '#1E1612';
   ctx.fillRect(0, 620, 1200, 180);
-  // Carpet
   ctx.fillStyle = '#4A1A20';
   ctx.fillRect(50, 630, 1100, 150);
   ctx.strokeStyle = '#6A2A30';
   ctx.lineWidth = 2;
   ctx.strokeRect(60, 640, 1080, 130);
-  // Carpet pattern
-  ctx.fillStyle = '#5A2228';
-  for (let cx = 80; cx < 1130; cx += 40) {
-    ctx.beginPath();
-    ctx.arc(cx, 700, 8, 0, Math.PI * 2);
-    ctx.fill();
-  }
 
   // ── Left Window ──
   const winX = 50, winY = 100, winW = 250, winH = 300;
-  // Window frame
   ctx.fillStyle = '#5A4A38';
   ctx.fillRect(winX - 8, winY - 8, winW + 16, winH + 16);
   drawWindow(ctx, winX, winY, winW, winH, time, true);
   // Curtains
   ctx.fillStyle = '#6A2030';
-  // Left curtain
   ctx.beginPath();
   ctx.moveTo(winX - 5, winY - 5);
   ctx.quadraticCurveTo(winX + 30, winY + 100, winX + 20, winY + winH + 5);
   ctx.lineTo(winX - 5, winY + winH + 5);
   ctx.closePath();
   ctx.fill();
-  // Right curtain
   ctx.beginPath();
   ctx.moveTo(winX + winW + 5, winY - 5);
   ctx.quadraticCurveTo(winX + winW - 30, winY + 100, winX + winW - 20, winY + winH + 5);
   ctx.lineTo(winX + winW + 5, winY + winH + 5);
   ctx.closePath();
   ctx.fill();
-  // Curtain rod
   ctx.fillStyle = '#B8860B';
   ctx.fillRect(winX - 20, winY - 15, winW + 40, 5);
-  ctx.beginPath();
-  ctx.arc(winX - 20, winY - 12, 6, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(winX + winW + 20, winY - 12, 6, 0, Math.PI * 2);
-  ctx.fill();
 
-  // ── Right Window (larger) ──
+  // ── Right Window ──
   const rWinX = 750, rWinY = 100, rWinW = 300, rWinH = 300;
   ctx.fillStyle = '#5A4A38';
   ctx.fillRect(rWinX - 8, rWinY - 8, rWinW + 16, rWinH + 16);
   drawWindow(ctx, rWinX, rWinY, rWinW, rWinH, time, true);
-  // Curtains
   ctx.fillStyle = '#6A2030';
   ctx.beginPath();
   ctx.moveTo(rWinX - 5, rWinY - 5);
@@ -120,36 +130,11 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
   ctx.fillStyle = '#B8860B';
   ctx.fillRect(rWinX - 20, rWinY - 15, rWinW + 40, 5);
 
-  // Clue 1: Lipstick mark on right window glass
-  ctx.save();
-  ctx.fillStyle = '#C44060';
-  ctx.globalAlpha = 0.5;
-  ctx.beginPath();
-  ctx.ellipse(850, 230, 8, 5, 0.2, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(850, 238, 7, 4, -0.1, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.globalAlpha = 1;
-  ctx.restore();
-
-  // ── Left Seat (velvet) ──
+  // ── Left Seat ──
   const seatY = 450;
-  // Seat back
   ctx.fillStyle = '#3A1520';
   roundRect(ctx, 60, seatY - 100, 280, 120, 10);
   ctx.fill();
-  // Velvet texture on back
-  ctx.fillStyle = 'rgba(80,30,40,0.3)';
-  for (let vy = seatY - 90; vy < seatY + 10; vy += 8) {
-    ctx.beginPath();
-    ctx.moveTo(70, vy);
-    ctx.lineTo(330, vy);
-    ctx.strokeStyle = 'rgba(60,20,30,0.2)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }
-  // Button tufts
   ctx.fillStyle = '#5A2530';
   for (let bx = 100; bx < 320; bx += 50) {
     for (let by = seatY - 80; by < seatY; by += 40) {
@@ -158,34 +143,25 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
       ctx.fill();
     }
   }
-  // Seat cushion
-  ctx.fillStyle = '#4A1A28';
-  roundRect(ctx, 55, seatY + 20, 290, 60, 8);
-  ctx.fill();
   ctx.fillStyle = '#5A2230';
   roundRect(ctx, 60, seatY + 15, 280, 55, 8);
   ctx.fill();
 
-  // Clue 2: Ticket stub between cushions
+  // ── Clue 3: Silk handkerchief on left seat ──
   ctx.save();
-  ctx.translate(400, 510);
-  ctx.rotate(-0.1);
-  ctx.fillStyle = '#E8D5A0';
-  ctx.fillRect(-20, -6, 40, 14);
-  ctx.fillStyle = '#8B0000';
-  ctx.fillRect(-20, -6, 40, 3);
-  ctx.font = '5px monospace';
-  ctx.fillStyle = '#333';
-  ctx.textAlign = 'center';
-  ctx.fillText('VAGONE 7', 0, 4);
-  // Perforated edge
-  ctx.strokeStyle = '#AAA';
+  ctx.translate(280, 370);
+  ctx.rotate(0.1);
+  ctx.fillStyle = '#F0E8F5';
+  ctx.fillRect(0, 0, 35, 35);
+  ctx.strokeStyle = '#DAD0E8';
+  ctx.lineWidth = 0.5;
   ctx.setLineDash([2, 2]);
-  ctx.beginPath();
-  ctx.moveTo(-20, 0);
-  ctx.lineTo(20, 0);
-  ctx.stroke();
+  ctx.strokeRect(2, 2, 31, 31);
   ctx.setLineDash([]);
+  ctx.font = 'italic 8px Georgia';
+  ctx.fillStyle = '#6A3A7A';
+  ctx.textAlign = 'center';
+  ctx.fillText('V.M.', 17, 22);
   ctx.restore();
 
   // ── Right Seat ──
@@ -204,77 +180,113 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
   roundRect(ctx, 750, seatY + 15, 380, 55, 8);
   ctx.fill();
 
-  // ── Small Table (between seats) ──
+  // ── Small Table ──
   ctx.fillStyle = '#5A4030';
   ctx.fillRect(380, seatY + 10, 120, 8);
   drawWoodGrain(ctx, 380, seatY + 10, 120, 8);
-  // Table leg
   ctx.fillStyle = '#4A3020';
   ctx.fillRect(435, seatY + 18, 10, 100);
-  // Table base
-  ctx.fillStyle = '#3A2818';
-  ctx.beginPath();
-  ctx.ellipse(440, seatY + 118, 30, 8, 0, 0, Math.PI * 2);
-  ctx.fill();
 
-  // ── Mirror (between windows, on wall) ──
+  // ── Clue 1: Glass with residue on small table ──
+  ctx.save();
+  ctx.fillStyle = 'rgba(200,220,240,0.15)';
+  ctx.fillRect(388, seatY - 30, 20, 40);
+  ctx.beginPath();
+  ctx.ellipse(398, seatY - 30, 10, 4, 0, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(200,220,240,0.2)';
+  ctx.fill();
+  // White residue at the bottom
+  ctx.fillStyle = 'rgba(240,240,240,0.4)';
+  ctx.beginPath();
+  ctx.ellipse(398, seatY + 8, 7, 2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // ── Mirror (between windows) ──
   const mirX = 450, mirY = 140;
   ctx.fillStyle = '#B8860B';
   ctx.fillRect(mirX - 4, mirY - 4, 128, 158);
   ctx.fillStyle = '#8B6914';
   ctx.fillRect(mirX, mirY, 120, 150);
-  // Mirror reflection - dark/moody
   const mirGrad = ctx.createLinearGradient(mirX, mirY, mirX + 120, mirY + 150);
   mirGrad.addColorStop(0, '#2A2A3A');
   mirGrad.addColorStop(0.5, '#3A3A4A');
   mirGrad.addColorStop(1, '#2A2A35');
   ctx.fillStyle = mirGrad;
   ctx.fillRect(mirX + 3, mirY + 3, 114, 144);
-  // Reflection highlight
-  ctx.fillStyle = 'rgba(100,100,130,0.1)';
-  ctx.beginPath();
-  ctx.moveTo(mirX + 10, mirY + 10);
-  ctx.lineTo(mirX + 40, mirY + 10);
-  ctx.lineTo(mirX + 10, mirY + 60);
-  ctx.closePath();
-  ctx.fill();
 
-  // Clue 5: Coded message scratched into mirror frame
+  // ── Clue 5: Photo of victim with woman, lying near mirror ──
   ctx.save();
-  ctx.font = '6px monospace';
-  ctx.fillStyle = 'rgba(150,130,80,0.4)';
-  ctx.fillText('V-I-I  X-I-V', mirX + 5, mirY + 155);
-  ctx.fillText('III-XX', mirX + 90, mirY - 1);
+  ctx.translate(480, 285);
+  ctx.rotate(-0.08);
+  ctx.fillStyle = '#F5F0E0';
+  ctx.fillRect(0, 0, 50, 40);
+  ctx.fillStyle = '#CABFA5';
+  ctx.fillRect(3, 3, 44, 28);
+  // Two figures
+  ctx.fillStyle = '#8A7560';
+  ctx.beginPath();
+  ctx.arc(18, 16, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillRect(12, 22, 12, 8);
+  ctx.fillStyle = '#7A6555';
+  ctx.beginPath();
+  ctx.arc(35, 16, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillRect(29, 22, 12, 8);
+  // Text on back visible at edge
+  ctx.font = 'italic 5px Georgia';
+  ctx.fillStyle = '#555';
+  ctx.fillText('\u2014 V.', 38, 38);
   ctx.restore();
 
-  // ── Luggage Rack (top, above right seat) ──
+  // ── Clue 2: Business card in victim's jacket pocket area ──
+  ctx.save();
+  ctx.translate(585, 340);
+  ctx.rotate(0.05);
+  ctx.fillStyle = '#FAFAF5';
+  ctx.fillRect(0, 0, 50, 28);
+  ctx.font = '5px Georgia';
+  ctx.fillStyle = '#222';
+  ctx.textAlign = 'left';
+  ctx.fillText('Dr. Fabbri', 4, 10);
+  ctx.fillText('Cardiologo', 4, 17);
+  ctx.font = '4px monospace';
+  ctx.fillStyle = '#666';
+  ctx.fillText('338-XXX-XXXX', 4, 24);
+  ctx.restore();
+
+  // ── Clue 4: Pharmacy receipt on floor near right seat ──
+  ctx.save();
+  ctx.translate(735, 445);
+  ctx.rotate(-0.12);
+  ctx.fillStyle = '#F0F0E8';
+  ctx.fillRect(0, 0, 40, 55);
+  ctx.font = '4px monospace';
+  ctx.fillStyle = '#333';
+  ctx.textAlign = 'left';
+  ctx.fillText('FARMACIA', 3, 8);
+  ctx.fillText('CENTRALE', 3, 14);
+  ctx.fillText('----------', 3, 20);
+  ctx.fillText('Sonnifero', 3, 27);
+  ctx.fillText('x1', 3, 33);
+  ctx.fillText('----------', 3, 39);
+  ctx.fillText('18:00', 3, 46);
+  ctx.restore();
+
+  // ── Luggage Rack ──
   ctx.strokeStyle = '#B8860B';
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(750, 50);
   ctx.lineTo(1130, 50);
   ctx.stroke();
-  // Rack supports
   for (const rx of [780, 950, 1100]) {
     ctx.beginPath();
     ctx.moveTo(rx, 50);
     ctx.lineTo(rx, 30);
     ctx.stroke();
   }
-  // Mesh/bars
-  ctx.lineWidth = 1;
-  for (let rb = 760; rb < 1120; rb += 15) {
-    ctx.beginPath();
-    ctx.moveTo(rb, 50);
-    ctx.lineTo(rb, 80);
-    ctx.stroke();
-  }
-  ctx.beginPath();
-  ctx.moveTo(750, 65);
-  ctx.lineTo(1130, 65);
-  ctx.moveTo(750, 80);
-  ctx.lineTo(1130, 80);
-  ctx.stroke();
 
   // Suitcase on rack
   ctx.fillStyle = '#5A3A20';
@@ -283,28 +295,6 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
   ctx.strokeStyle = '#8B6914';
   ctx.lineWidth = 1;
   ctx.strokeRect(830, 58, 80, 19);
-  // Suitcase clasp
-  ctx.fillStyle = '#B8860B';
-  ctx.fillRect(865, 58, 10, 4);
-
-  // Clue 3: Monogrammed handkerchief on luggage rack
-  ctx.save();
-  ctx.translate(700, 160);
-  ctx.rotate(0.15);
-  ctx.fillStyle = '#F5F0E8';
-  ctx.fillRect(0, 0, 28, 28);
-  // Lace border
-  ctx.strokeStyle = '#DDD';
-  ctx.lineWidth = 0.5;
-  ctx.setLineDash([2, 2]);
-  ctx.strokeRect(2, 2, 24, 24);
-  ctx.setLineDash([]);
-  // Monogram
-  ctx.font = 'italic 10px Georgia';
-  ctx.fillStyle = '#4A1A4A';
-  ctx.textAlign = 'center';
-  ctx.fillText('L.M.', 14, 18);
-  ctx.restore();
 
   // ── Coat Hook (right wall) ──
   ctx.fillStyle = '#B8860B';
@@ -312,7 +302,6 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
   ctx.arc(1100, 280, 6, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillRect(1095, 280, 10, 5);
-  // Coat hanging
   ctx.fillStyle = '#1A1A2A';
   ctx.beginPath();
   ctx.moveTo(1080, 285);
@@ -323,31 +312,6 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
   ctx.lineTo(1070, 350);
   ctx.closePath();
   ctx.fill();
-  // Coat collar
-  ctx.fillStyle = '#2A2A3A';
-  ctx.beginPath();
-  ctx.moveTo(1080, 285);
-  ctx.lineTo(1100, 310);
-  ctx.lineTo(1120, 285);
-  ctx.closePath();
-  ctx.fill();
-  // Coat pocket
-  ctx.strokeStyle = '#151520';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(1080, 380);
-  ctx.lineTo(1080, 420);
-  ctx.lineTo(1100, 420);
-  ctx.stroke();
-
-  // Clue 4: Vial in coat pocket
-  ctx.save();
-  ctx.translate(1050, 380);
-  ctx.fillStyle = 'rgba(100,200,150,0.4)';
-  ctx.fillRect(0, 0, 6, 18);
-  ctx.fillStyle = '#555';
-  ctx.fillRect(-1, -2, 8, 4);
-  ctx.restore();
 
   // ── Overhead lamp ──
   ctx.fillStyle = '#B8860B';
@@ -360,19 +324,17 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
   ctx.lineTo(570, 40);
   ctx.closePath();
   ctx.fill();
-  // Lamp glow
   const lampGlow = ctx.createRadialGradient(600, 50, 0, 600, 80, 100);
   lampGlow.addColorStop(0, 'rgba(255,230,160,0.05)');
   lampGlow.addColorStop(1, 'rgba(255,230,160,0)');
   ctx.fillStyle = lampGlow;
   ctx.fillRect(500, 40, 200, 120);
 
-  // ── Passing scenery effect through windows ──
+  // ── Passing scenery ──
   const scrollX = (time * 0.1) % 400;
   ctx.save();
   ctx.globalAlpha = 0.05;
   ctx.fillStyle = '#1A3A1A';
-  // Trees passing by left window
   for (let t = -200; t < 500; t += 80) {
     const tx = winX + ((t - scrollX + 600) % 400) - 100;
     if (tx > winX && tx < winX + winW) {
@@ -388,12 +350,42 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
 
 export function createScene4(): SceneData {
   return {
-    id: 4,
-    title: 'Il Treno',
-    subtitle: 'Capitolo IV',
-    mystery: 'Cosa è successo nel vagone 7?',
-    solution: 'Il rossetto, il biglietto, il fazzoletto, la fiala e il messaggio cifrato svelano un avvelenamento pianificato nel vagone.',
+    id: 3,
+    title: 'Il Treno delle 21:30',
+    subtitle: 'Capitolo III',
+    storyIntro: 'Un passeggero \u00E8 stato trovato privo di sensi nel vagone 7 del treno Roma-Milano. Tre persone erano nel vagone. Scopri cosa \u00E8 successo.',
+    mystery: 'Chi ha drogato il passeggero?',
+    solution: "La donna con iniziali V.M. ha acquistato il sonnifero e lo ha messo nel bicchiere della vittima. Il Dr. Fabbri era semplicemente il cardiologo della vittima.",
     clues: makeClues(),
+    requiredConnections: [
+      { clueA: 'bicchiere', clueB: 'ricevuta' },
+      { clueA: 'fazzoletto', clueB: 'foto' },
+      { clueA: 'biglietto-visita', clueB: 'bicchiere' },
+    ],
+    deductionQuestion: 'Chi ha drogato il passeggero?',
+    deductionOptions: [
+      {
+        text: 'Il controllore del treno',
+        correct: false,
+        explanation: 'Nessun indizio collega il controllore ai fatti. Non ci sono elementi che lo riguardino.',
+      },
+      {
+        text: 'La donna con iniziali V.M.',
+        correct: true,
+        explanation: "Esatto! Il fazzoletto con le iniziali V.M., la foto firmata 'V.', la ricevuta del sonnifero e i residui nel bicchiere indicano che V.M. ha drogato la vittima.",
+      },
+      {
+        text: 'Il Dr. Fabbri',
+        correct: false,
+        explanation: 'Il biglietto da visita era nella tasca della vittima \u2014 il Dr. Fabbri era il suo cardiologo, non il colpevole.',
+      },
+      {
+        text: 'Un passeggero sconosciuto',
+        correct: false,
+        explanation: 'Gli indizi puntano chiaramente a una persona che conosceva la vittima intimamente (la foto, il fazzoletto).',
+      },
+    ],
+    solutionNarrative: "La donna V.M. conosceva intimamente la vittima ('Per sempre tuo \u2014 V.'). Ha acquistato un sonnifero in farmacia alle 18:00 e lo ha sciolto nel bicchiere della vittima durante il viaggio. Il fazzoletto con le sue iniziali e il profumo di donna confermano la sua presenza. Il Dr. Fabbri era solo il cardiologo della vittima.",
     draw,
   };
 }

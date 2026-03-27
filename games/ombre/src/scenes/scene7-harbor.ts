@@ -423,9 +423,23 @@ export function createScene7(): SceneData {
     id: 7,
     title: 'Il Porto',
     subtitle: 'Capitolo VII',
+    storyIntro: 'Una nave sconosciuta \u00E8 stata avvistata nel porto durante la notte. All\'alba non c\'era pi\u00F9 traccia, ma qualcosa \u00E8 stato scaricato. Indaga.',
     mystery: 'Cosa trasportava la nave fantasma?',
     solution: 'Le impronte, l\'etichetta, la bussola, la corda, il segnale e l\'ancora rivelano un contrabbando notturno con una nave proveniente da Odessa.',
     clues: makeClues(),
+    requiredConnections: [
+      { clueA: 'boot-prints', clueB: 'cargo-label' },
+      { clueA: 'compass', clueB: 'anchor' },
+      { clueA: 'cut-rope', clueB: 'lighthouse' },
+    ],
+    deductionQuestion: 'Cosa trasportava la nave?',
+    deductionOptions: [
+      { text: 'Armi da guerra', correct: false, explanation: 'L\'etichetta del carico non indica materiale bellico.' },
+      { text: 'Opere d\'arte rubate', correct: true, explanation: 'L\'etichetta strappata, la provenienza da Odessa e il segnale irregolare dal faro indicano un trasporto clandestino di opere d\'arte.' },
+      { text: 'Nulla, era un\'esercitazione', correct: false, explanation: 'La corda tagliata e le impronte bagnate dimostrano un\'operazione reale e furtiva.' },
+      { text: 'Droghe', correct: false, explanation: 'I simboli sull\'ancora e l\'etichetta del carico puntano verso merci culturali, non sostanze.' },
+    ],
+    solutionNarrative: 'La nave proveniente da Odessa (confermato dalle iscrizioni sull\'ancora) ha scaricato clandestinamente opere d\'arte rubate. Il faro segnalava con un codice irregolare per guidare la nave. La corda tagliata serviva a liberare rapidamente il carico, e le impronte bagnate mostrano che gli operai hanno lavorato in fretta prima dell\'alba.',
     draw,
   };
 }

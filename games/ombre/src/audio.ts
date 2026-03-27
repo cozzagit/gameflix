@@ -112,6 +112,36 @@ export function playAmbientDrone(): void {
   }, 8000);
 }
 
+export function playConnectionCorrect(): void {
+  playTone(440, 0.2, 'sine', 0.1, 0);
+  playTone(554, 0.2, 'sine', 0.1, 0.1);
+  playTone(659, 0.3, 'sine', 0.12, 0.2);
+}
+
+export function playConnectionWrong(): void {
+  playTone(200, 0.2, 'sawtooth', 0.06, 0);
+  playTone(180, 0.3, 'sawtooth', 0.06, 0.1);
+}
+
+export function playCorrectAnswer(): void {
+  const notes = [523, 659, 784, 1047];
+  notes.forEach((freq, i) => {
+    playTone(freq, 0.5, 'sine', 0.12, i * 0.12);
+    playTone(freq * 0.5, 0.5, 'triangle', 0.06, i * 0.12);
+  });
+}
+
+export function playWrongAnswer(): void {
+  playTone(200, 0.3, 'sawtooth', 0.06, 0);
+  playTone(150, 0.4, 'sawtooth', 0.05, 0.15);
+}
+
+export function playPhaseTransition(): void {
+  playNoise(0.5, 0.01);
+  playTone(330, 0.6, 'sine', 0.08, 0.2);
+  playTone(440, 0.6, 'sine', 0.08, 0.4);
+}
+
 export function initAudio(): void {
   getCtx();
 }

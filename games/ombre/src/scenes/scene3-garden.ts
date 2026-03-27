@@ -426,12 +426,25 @@ function draw(ctx: CanvasRenderingContext2D, time: number): void {
 
 export function createScene3(): SceneData {
   return {
-    id: 3,
+    id: 5,
     title: 'Il Giardino',
-    subtitle: 'Capitolo III',
-    mystery: 'Chi è fuggito dal giardino?',
+    subtitle: 'Capitolo V',
+    storyIntro: 'Una donna \u00E8 fuggita dal giardino della villa durante la notte. Nessuno sa chi fosse o cosa cercasse. Esamina il giardino e ricostruisci la fuga.',
+    mystery: 'Chi \u00E8 fuggito dal giardino?',
     solution: 'Le impronte, la stoffa, il medaglione, la busta e i graffi raccontano di una fuga precipitosa attraverso il giardino.',
     clues: makeClues(),
+    requiredConnections: [
+      { clueA: 'footprints', clueB: 'fabric' },
+      { clueA: 'locket', clueB: 'envelope' },
+    ],
+    deductionQuestion: 'Chi \u00E8 fuggito dal giardino?',
+    deductionOptions: [
+      { text: 'Un ladro comune', correct: false, explanation: 'Un ladro non avrebbe lasciato un medaglione prezioso e una busta con un sigillo.' },
+      { text: 'La padrona di casa', correct: true, explanation: 'Il medaglione personale, la busta sigillata e la stoffa del suo abito indicano che fuggiva dalla villa per motivi personali.' },
+      { text: 'Un giardiniere', correct: false, explanation: 'I graffi sulla serratura del capanno e le impronte di stivali eleganti non corrispondono a un giardiniere.' },
+      { text: 'Un fantasma', correct: false, explanation: 'Le impronte nel fango e il tessuto impigliato dimostrano che era una persona reale.' },
+    ],
+    solutionNarrative: 'La padrona di casa \u00E8 fuggita di notte attraverso il giardino, perdendo il suo medaglione e lasciando una busta nella fontana. Ha forzato il capanno per prendere qualcosa, poi \u00E8 uscita dal cancello in fretta, lasciando impronte e un lembo del suo abito sulla siepe.',
     draw,
   };
 }

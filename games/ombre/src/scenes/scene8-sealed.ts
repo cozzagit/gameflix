@@ -412,9 +412,23 @@ export function createScene8(): SceneData {
     id: 8,
     title: 'La Camera Sigillata',
     subtitle: 'Capitolo VIII',
-    mystery: 'Come è uscito l\'assassino dalla stanza chiusa?',
-    solution: 'Il bicchiere, il libro falso, la fuliggine, l\'orologio rotto, la corrente d\'aria, il filo e lo scomparto rivelano che l\'assassino è uscito dal camino, usando il filo per chiudere la finestra dall\'esterno.',
+    storyIntro: 'Un uomo \u00E8 stato trovato morto in una stanza chiusa dall\'interno. Porte e finestre sbarrate. Eppure l\'assassino \u00E8 riuscito a fuggire. Come?',
+    mystery: 'Come \u00E8 uscito l\'assassino dalla stanza chiusa?',
+    solution: 'L\'assassino \u00E8 uscito dal camino, usando il filo per chiudere la finestra dall\'esterno e creare l\'illusione della stanza sigillata.',
     clues: makeClues(),
+    requiredConnections: [
+      { clueA: 'soot', clueB: 'draft' },
+      { clueA: 'thread', clueB: 'clock' },
+      { clueA: 'glass', clueB: 'compartment' },
+    ],
+    deductionQuestion: 'Come \u00E8 uscito l\'assassino?',
+    deductionOptions: [
+      { text: 'Dalla porta, aveva un complice', correct: false, explanation: 'La porta era chiusa dall\'interno con il chiavistello. Nessun complice poteva richiuderla.' },
+      { text: 'Dal camino, usando un filo per la finestra', correct: true, explanation: 'La fuliggine nel camino, la corrente d\'aria, il filo sul chiavistello della finestra: l\'assassino \u00E8 salito dal camino e ha usato il filo per chiudere la finestra dall\'esterno.' },
+      { text: 'Era gi\u00E0 morto quando la stanza \u00E8 stata chiusa', correct: false, explanation: 'Il bicchiere con il residuo e l\'orologio rotto indicano che qualcun altro era presente.' },
+      { text: 'Da un passaggio segreto dietro la libreria', correct: false, explanation: 'La corrente d\'aria proviene dal camino, non dalla libreria. Lo scomparto nel tavolo conteneva solo documenti.' },
+    ],
+    solutionNarrative: 'L\'assassino ha avvelenato la vittima (residuo nel bicchiere), poi \u00E8 uscito arrampicandosi nel camino (fuliggine). Ha usato un filo sottile passato attraverso la finestra per chiudere il chiavistello dall\'esterno, creando l\'illusione della stanza sigillata. L\'orologio rotto segna l\'ora del delitto, e lo scomparto segreto nel tavolo conteneva i documenti che l\'assassino cercava.',
     draw,
   };
 }
