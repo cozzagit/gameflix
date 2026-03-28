@@ -330,9 +330,9 @@ export class Game {
       return;
     }
 
-    // Check option buttons
+    // Check option buttons — must match renderDeduce layout
     const options = this.currentScene.deductionOptions;
-    const startY = 350;
+    const startY = 230;
     const optW = 700, optH = 50;
     const optX = GAME_W / 2 - optW / 2;
 
