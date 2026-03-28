@@ -1,0 +1,23 @@
+{
+  "id": "eco",
+  "version": "1.0.0",
+  "title": "Eco",
+  "description": "Naviga in caverne buie usando solo il suono. Emetti impulsi sonori per rivelare le pareti, trova cristalli e raggiungi l'uscita prima di esaurire l'energia.",
+  "category": "brainlab",
+  "difficulty": 4,
+  "estimatedDuration": 20,
+  "thumbnailUrl": "/images/games/eco-thumb.svg",
+  "tags": ["sonar", "esplorazione", "caverna", "puzzle", "ecolocalizzazione"],
+  "supportsDaily": false,
+  "scoringType": "points",
+  "minPlayersForLeaderboard": 5,
+  "features": {
+    "levels": 10,
+    "tutorial": true,
+    "mobile": false,
+    "audio": true,
+    "pwa": false
+  },
+  "releaseDate": null,
+  "status": "ready"
+}

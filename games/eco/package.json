@@ -1,0 +1,17 @@
+{
+  "name": "@gameflix/eco",
+  "version": "1.0.0",
+  "description": "Eco — Sonar-based cave exploration puzzle for Gameflix BrainLab",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "author": "Luca Cozza",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vite": "^6.3.5"
+  }
+}
